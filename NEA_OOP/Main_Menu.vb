@@ -9,7 +9,7 @@ Public Class Main_Menu
     Private PlayerVsComputerButton As New Button
     Private LeaderBoardButton As New Button
     Private GameTypeChoiceLabel As New Label
-    Private BackgroundImage As New PictureBox
+    Private Shadows BackgroundImage As New PictureBox
     Private QuitButton As New Button
 
     ' Main Code 
@@ -34,12 +34,12 @@ Public Class Main_Menu
         MinimizeBox = False 'disable user minimizing 
         FormBorderStyle = FormBorderStyle.FixedSingle 'disable user changing window size
         Width = 1000 'sets width of window
-        Height = 800 'sets length of window 
+        Height = 800 'sets height of window 
         StartPosition = FormStartPosition.Manual 'allows me to change the location of the window
         Location = New Point(0, 0) 'moves window to top left
         BackColor = Color.LightBlue 'sets background colour to blue
         Icon = New Icon("icon.ico") 'sets icon to custom icon
-        'Creates title of form
+        ' Form Title
         Title.Location = New Point(242, 5)
         Title.Size = New Size(500, 50)
         Title.SizeMode = PictureBoxSizeMode.Zoom
@@ -84,6 +84,7 @@ Public Class Main_Menu
         Player_Vs_Player_Menu.Form_Setup()
     End Sub
     Public Sub PlayerVsComputerButton_Click(sender As Object, e As EventArgs)
+        Me.Hide()
         Player_Vs_Computer_Menu.Form_Setup()
     End Sub
     Public Sub LeaderBoardButton_Click(sender As Object, e As EventArgs)
