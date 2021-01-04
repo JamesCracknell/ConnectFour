@@ -1,9 +1,10 @@
 ﻿Public Class Player_Vs_Player_Menu
 
-    'Control Declarations
+    ' Control Declarations
+
     Private Title As New PictureBox
     Private CreditLabel As New Label
-    Private BackgroundImage As New PictureBox
+    Private Shadows BackgroundImage As New PictureBox
     Private PlayerChoiceLabel As New Label
     Private InputPlayerNameLabel As New Label
     Private PlayerNameTextBox As New TextBox
@@ -25,12 +26,12 @@
         MinimizeBox = False 'disable user minimizing 
         FormBorderStyle = FormBorderStyle.FixedSingle 'disable user changing window size
         Width = 1000 'sets width of window
-        Height = 800 'sets length of window 
+        Height = 800 'sets height of window 
         StartPosition = FormStartPosition.Manual 'allows me to change the location of the window
         Location = New Point(0, 0) 'moves window to top left
         BackColor = Color.LightBlue 'sets background colour to blue
         Icon = New Icon("icon.ico") 'sets icon to custom icon
-        'Creates title of form
+        ' Form Title
         Title.Location = New Point(242, 5)
         Title.Size = New Size(500, 50)
         Title.SizeMode = PictureBoxSizeMode.Zoom
@@ -175,4 +176,8 @@
             Return False
         End If
     End Function
+
+    Private Sub Player_Vs_Player_Menu_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+
+    End Sub
 End Class
