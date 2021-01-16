@@ -405,9 +405,10 @@ Public Class Player_Vs_Computer_Game
     Inherits Game
     Private InitialDepth As Integer
     Private ComputerColour As Colours
+    Private ChanceOfMistake As Decimal
     Public Sub New(Difficulty As String, Username As String, ChosenColour As String, StartingPlayer As String)
         MyBase.New(Difficulty, Username, ChosenColour, "Computer", "")
-        InitialDepth = 1 'this must be set based on difficulty.
+        InitialDepth = SetDepth(Difficulty) 'this must be set based on difficulty.
         If StartingPlayer = Username Then
             SetCurrentColour(PlayerOneColour)
         ElseIf StartingPlayer = "Computer Player" Then
@@ -420,11 +421,25 @@ Public Class Player_Vs_Computer_Game
             End If
         End If
     End Sub
+
+    Public Function SetDepth(SpecifiedDifficulty) 'sets attributes based on difficulty
+        If SpecifiedDifficulty = "Easy Difficulty" Then
+            InitialDepth = 2
+            ChanceOfMistake = 20
+
+        ElseIf SpecifiedDifficulty = "Medium Difficulty" Then
+            InitialDepth = 3
+        ElseIf SpecifiedDifficulty = "Hard Difficulty" Then
+            InitialDepth = 4
+        Else 'Impossible difficulty
+            InitialDepth = 5
+        End If
+    End Function
     Public Sub ComputerMove()
         Dim MoveMade As Boolean = False
         Dim Returns
         Dim BestXCoordinate As Integer
-        Returns = Minimax(BoardState, Double.NegativeInfinity, Double.PositiveInfinity, 4, True)
+        Returns = Minimax(BoardState, Double.NegativeInfinity, Double.PositiveInfinity, 6, True)
         BestXCoordinate = Returns.item2
         For y = 5 To 0 Step -1 'counts backwards (up)
             If GetFilledStatus(BestXCoordinate, y) <> "Y" And GetFilledStatus(BestXCoordinate, y) <> "R" And MoveMade = False Then
@@ -496,8 +511,6 @@ Public Class Player_Vs_Computer_Game
                         CurrentBoardState(Order(x), Count) = Nothing
                     End If
                     Count -= 1
-
-
                 Loop Until Count = 0 Or Searched = True
                 Beta = Math.Min(Beta, BestEvaluation)
                 If Alpha >= Beta Then
@@ -520,10 +533,10 @@ Public Class Player_Vs_Computer_Game
         If NumberOfTilesInSequence = 1 Then '1/4 of the tiles is filled 
             SectionScore += 1
         ElseIf NumberOfTilesInSequence = 2 Then '2/4 of the tiles is filled
-            SectionScore += 4
-            ElseIf NumberOfTilesInSequence = 3 Then '3/4 of the tiles is filled
-                SectionScore += 10
-            ElseIf NumberOfTilesInSequence = 4 Then '4/4 tiles are filled by one colour
+            SectionScore += 10
+        ElseIf NumberOfTilesInSequence = 3 Then '3/4 of the tiles is filled
+            SectionScore += 50
+        ElseIf NumberOfTilesInSequence = 4 Then '4/4 tiles are filled by one colour
                 SectionScore += 200
             End If
         Return SectionScore

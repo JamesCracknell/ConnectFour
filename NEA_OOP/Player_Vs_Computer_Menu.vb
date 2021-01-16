@@ -58,9 +58,7 @@
         Else 'if code is not running for the first time
             Username = "" 'resets username
             UsernameEnterButton.BackColor = Color.Transparent
-
         End If
-
     End Sub
 
     Public Sub Menu_Setup()
