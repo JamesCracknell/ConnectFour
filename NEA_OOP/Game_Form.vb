@@ -424,7 +424,7 @@ Public Class Player_Vs_Computer_Game
         Dim MoveMade As Boolean = False
         Dim Returns
         Dim BestXCoordinate As Integer
-        Returns = Minimax(BoardState, 2, True)
+        Returns = Minimax(BoardState, Double.NegativeInfinity, Double.PositiveInfinity, 4, True)
         BestXCoordinate = Returns.item2
         For y = 5 To 0 Step -1 'counts backwards (up)
             If GetFilledStatus(BestXCoordinate, y) <> "Y" And GetFilledStatus(BestXCoordinate, y) <> "R" And MoveMade = False Then
@@ -434,13 +434,15 @@ Public Class Player_Vs_Computer_Game
         Next
         SwitchMove()
     End Sub
-    Public Function Minimax(ByVal CurrentBoardState(,) As Char, Depth As Integer, MaximisingPlayer As Boolean)
+    Public Function Minimax(ByVal CurrentBoardState(,) As Char, Alpha As Double, Beta As Double, Depth As Integer, MaximisingPlayer As Boolean)
         Dim Evaluation
         Dim BestEvaluation As Double
         Dim BestColumn As Integer
         Dim Searched As Boolean = False
+        Dim Count As Integer
+        Dim Order() As Integer = {3, 4, 2, 5, 1, 6, 0} 'the order that board states should be searched
         If Depth = 0 Then  'if it has reached the end of its search depth
-            Return (StaticEvaluation(CurrentBoardState, MaximisingPlayer), Nothing)
+            Return (StaticEvaluation(CurrentBoardState), Nothing)
         Else
             If CheckForDrawingState(CurrentBoardState) Then 'if it is a draw (board is full)
                 Return (0, Nothing)
@@ -457,36 +459,50 @@ Public Class Player_Vs_Computer_Game
             BestEvaluation = Double.NegativeInfinity
             For x = 0 To 6
                 Searched = False
-                For y = 5 To 0 Step -1
-                    If CurrentBoardState(x, y) = Nothing And Searched = False Then
+                Count = 5
+                Do
+                    If CurrentBoardState(Order(x), Count) = Nothing And Searched = False Then
                         Searched = True ' so loop only runs once per column
-                        CurrentBoardState(x, y) = GetColourChar(GetPlayerTwoColour())
-                        Evaluation = Minimax(CurrentBoardState, Depth - 1, False)
-                        If Evaluation.item1 > BestEvaluation Then
-                            BestColumn = x
-                            BestEvaluation = Evaluation.item1
+                        CurrentBoardState(Order(x), Count) = GetColourChar(GetPlayerTwoColour())
+                        Evaluation = Minimax(CurrentBoardState, Alpha, Beta, Depth - 1, False)
+                        If Evaluation.item1 + Depth > BestEvaluation Then 'if it is less moves in, the score is higher. if two moves win, the shortest win is favoured.
+                            BestColumn = Order(x)
+                            BestEvaluation = Evaluation.item1 + Depth
                         End If
-                        CurrentBoardState(x, y) = Nothing
+                        CurrentBoardState(Order(x), Count) = Nothing
                     End If
-                Next
+                    Count -= 1
+                Loop Until Count = 0 Or Searched = True
+                Alpha = Math.Max(Alpha, BestEvaluation)
+                If Alpha >= Beta Then
+                    Return (BestEvaluation, BestColumn)
+                End If
             Next
             Return (BestEvaluation, BestColumn)
-        Else 'player move
+        Else
             BestEvaluation = Double.PositiveInfinity
             For x = 0 To 6
                 Searched = False
-                For y = 5 To 0 Step -1
-                    If CurrentBoardState(x, y) = Nothing And Searched = False Then
+                Count = 5
+                Do
+                    If CurrentBoardState(Order(x), Count) = Nothing And Searched = False Then
                         Searched = True ' so loop only runs once
-                        CurrentBoardState(x, y) = GetColourChar(GetPlayerOneColour())
-                        Evaluation = Minimax(CurrentBoardState, Depth - 1, True)
-                        If Evaluation.item1 < BestEvaluation Then
-                            BestColumn = x
-                            BestEvaluation = Evaluation.item1
+                        CurrentBoardState(Order(x), Count) = GetColourChar(GetPlayerOneColour())
+                        Evaluation = Minimax(CurrentBoardState, Alpha, Beta, Depth - 1, True)
+                        If Evaluation.item1 + Depth < BestEvaluation Then 'if it is less moves in, the score is higher. if two moves win, the shortest win is favoured. 
+                            BestColumn = Order(x)
+                            BestEvaluation = Evaluation.item1 + Depth
                         End If
-                        CurrentBoardState(x, y) = Nothing
+                        CurrentBoardState(Order(x), Count) = Nothing
                     End If
-                Next
+                    Count -= 1
+
+
+                Loop Until Count = 0 Or Searched = True
+                Beta = Math.Min(Beta, BestEvaluation)
+                If Alpha >= Beta Then
+                    Return (BestEvaluation, BestColumn)
+                End If
             Next
             Return (BestEvaluation, BestColumn)
         End If
@@ -501,42 +517,36 @@ Public Class Player_Vs_Computer_Game
                 NumberOfTilesInSequence += 1
             End If
         Next
-        'If NumberOfTilesInSequence = 1 Then '1/4 of the tiles is filled 
-        '    SectionScore += 1
-        If NumberOfTilesInSequence = 2 Then '2/4 of the tiles is filled
-            SectionScore += 2
-        ElseIf NumberOfTilesInSequence = 3 Then '3/4 of the tiles is filled
-            SectionScore += 5
-        ElseIf NumberOfTilesInSequence = 4 Then '4/4 tiles are filled by one colour
-            SectionScore += 100
-        End If
+        If NumberOfTilesInSequence = 1 Then '1/4 of the tiles is filled 
+            SectionScore += 1
+        ElseIf NumberOfTilesInSequence = 2 Then '2/4 of the tiles is filled
+            SectionScore += 4
+            ElseIf NumberOfTilesInSequence = 3 Then '3/4 of the tiles is filled
+                SectionScore += 10
+            ElseIf NumberOfTilesInSequence = 4 Then '4/4 tiles are filled by one colour
+                SectionScore += 200
+            End If
         Return SectionScore
     End Function
-    Public Function StaticEvaluation(EvaluatingBoardState(,) As Char, isMaximising As Boolean) 'returns the score of that board state
+    Public Function StaticEvaluation(EvaluatingBoardState(,) As Char) 'returns the score of that board state
         Dim EvaluatedScore As Integer = 0
         Dim AnalysisColour As Char
         Dim AnalysisSection(3) As Char
         Dim CentreCount As Integer
-        Dim NextToCentreCount
-        Dim TwoFromCentreCount
-        'If isMaximising = True Then 'computer player
-        '    AnalysisColour = GetColourChar(GetPlayerTwoColour())
-        'Else
-        '    AnalysisColour = GetColourChar(GetPlayerOneColour())
-        'End If
+        Dim NextToCentreCount As Integer
+        Dim TwoFromCentreCount As Integer
         AnalysisColour = GetColourChar(GetPlayerTwoColour())
 
-        'centre Is worth more
-        For Y = 5 To 0 Step -1 '
-            'If EvaluatingBoardState(1, Y) = AnalysisColour Then TwoFromCentreCount += 1
-            '    If EvaluatingBoardState(2, Y) = AnalysisColour Then NextToCentreCount += 1
+        For Y = 5 To 0 Step -1  'more central moves are worth more
+            If EvaluatingBoardState(1, Y) = AnalysisColour Then TwoFromCentreCount += 1
+            If EvaluatingBoardState(2, Y) = AnalysisColour Then NextToCentreCount += 1
             If EvaluatingBoardState(3, Y) = AnalysisColour Then CentreCount += 1
-            '    If EvaluatingBoardState(4, Y) = AnalysisColour Then NextToCentreCount += 1
-            '    If EvaluatingBoardState(5, Y) = AnalysisColour Then TwoFromCentreCount += 1
+            If EvaluatingBoardState(4, Y) = AnalysisColour Then NextToCentreCount += 1
+            If EvaluatingBoardState(5, Y) = AnalysisColour Then TwoFromCentreCount += 1
         Next
         EvaluatedScore += CentreCount * 3
-        'EvaluatedScore += NextToCentreCount
-        'EvaluatedScore += TwoFromCentreCount * 0.5
+        EvaluatedScore += NextToCentreCount
+        EvaluatedScore += TwoFromCentreCount * 0.5
 
         ' Verticals
         For X = 0 To 6
@@ -557,6 +567,8 @@ Public Class Player_Vs_Computer_Game
                 EvaluatedScore += EvaluateScore(AnalysisSection, AnalysisColour)
             Next
         Next
+
+        ' Diagonals
 
         For X = 0 To 3
             For Y = 0 To 2
