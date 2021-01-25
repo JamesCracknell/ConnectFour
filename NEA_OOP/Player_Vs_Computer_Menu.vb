@@ -27,7 +27,7 @@
     ' Main Code
     Public Sub Form_Setup()
         Me.Show()
-        If FirstTimeRunning = True Then
+        If FirstTimeRunning Then
             MaximizeBox = False 'disable user making the window a full screen
             MinimizeBox = False 'disable user minimizing
             FormBorderStyle = FormBorderStyle.FixedSingle 'disable user changing window size
@@ -206,7 +206,7 @@
             If StartingPlayer <> "Computer Player" And StartingPlayer <> "Random" Then 'if the starting player is a username, ensures the username is updated
                 StartingPlayer = Username
             End If
-            Game_Form.Game_Setup("Computer", Difficulty, Username, ColourChoice, "", "", StartingPlayer)
+            Game_Form.Game_Setup("Computer", Difficulty, Username, ColourChoice, "", "", StartingPlayer, 0)
         Else
             CanContinueIndicatorLabel.Visible = True
         End If
