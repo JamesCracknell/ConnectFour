@@ -56,11 +56,12 @@
             BackgroundImage.SizeMode = PictureBoxSizeMode.Zoom 'sets size mode to allow the whole image to be shown
             BackgroundImage.Image = Image.FromFile("BackgroundImage.png")
             Controls.Add(BackgroundImage)
+            FirstTimeRunning = False
             Menu_Setup()
         Else
             PlayerOneCurrentNameLabel.Text = ""
             PlayerTwoCurrentNameLabel.Text = ""
-            TimeCustomiserTextbox.Text = ""
+            TimeCustomiserTextbox.Text = 120
             SubmitPlayerOneNameButton.BackColor = Color.Transparent
             SubmitPlayerTwoNameButton.BackColor = Color.Transparent
         End If
@@ -267,7 +268,6 @@
                     StartingPlayer = PlayerTwoCurrentNameLabel.Text
                 End If
             End If
-
             Game_Form.Game_Setup("Player", SubType, PlayerOneCurrentNameLabel.Text, ColourChoice, PlayerTwoCurrentNameLabel.Text, OppositeColour, StartingPlayer, TimeCustomiserTextbox.Text)
         Else
             CanContinueIndicatorLabel.Visible = True
@@ -280,6 +280,5 @@
             Return False
         End If
     End Function
-
 
 End Class

@@ -16,7 +16,6 @@
     Private PlayerTwoTimer As New Timer
     Private PlayerOneTimerLabel As New Label
     Private PlayerTwoTimerLabel As New Label
-    Private CurrentGameType
 
 
     ' Variable Declarations
@@ -28,6 +27,7 @@
     Private BoardPainted As Boolean = False 'only allows board to be painted once a game
     Private PlayerOneTimerValue As Decimal
     Private PlayerTwoTimerValue As Decimal
+    Private CurrentGameType As String
 
     ' Main Code
     ''JOEQUESTION do these need byval and byref. should these be obtained using a getter instead.
@@ -47,6 +47,7 @@
                 UpdateCurrentMoveVisual()
                 Controls.Add(StartGameButton)
                 If PreviousGameType <> "Computer" Then 'previous game was NOT a computer game
+                    DisableTimers()
                     'needs to switch menu
                 End If
             End If
@@ -54,14 +55,20 @@
         ElseIf GameType = "Player" Then
             CurrentGame = New Player_Vs_Player_Game(SubType, PlayerOneName, PlayerOneColour, PlayerTwoName, PlayerTwoColour, GameStartingPlayer)
             If FirstTimeRunning Then
-                Form_Setup()
                 Board_Setup()
+                Form_Setup()
                 Player_Form_Setup(SubType, CountdownTime)
             Else
+                DisableTimers()
                 Board_Update()
                 UpdateCurrentMoveVisual()
                 SetTimerValues(CountdownTime) ''''''''''''''''''''''''''''
                 Controls.Add(StartGameButton)
+            End If
+            If SubType = "Countdown" Then
+                Countdown_Game_Setup(SubType, CountdownTime)
+            ElseIf SubType = "Timed Game" Then
+                Timed_Game_Setup(SubType)
             End If
         End If
         BoardPainted = False
@@ -170,7 +177,6 @@
     Public Sub Computer_Form_SetUp() 'add elements exclusive to computer vs player game
         ' computer making move indicator
     End Sub
-
     Public Sub Player_Form_Setup(SubType As String, CountdownTime As String)
         ' set up player names
         ' call subtype games
@@ -184,53 +190,62 @@
         Main_Menu.RunTimeContructor(PlayerTwoNameLabel, 542, 75, 150, 30, CStr(CurrentGame.GetPlayerTwoName()), ContentAlignment.MiddleCenter, "Microsoft Sans Serif", 12, Cursors.Default, Color.Transparent)
         PlayerTwoNameLabel.Visible = False
         Controls.Add(PlayerTwoNameLabel)
-        If SubType = "Countdown" Then
-            Countdown_Game_Setup(SubType, CountdownTime)
-        ElseIf SubType = "Timed Game" Then
-            Timed_Game_Setup(SubType)
+        If SubType.ToLower <> "no timer" Then
+            ' PlayerOneTimerLabel
+            Main_Menu.RunTimeContructor(PlayerOneTimerLabel, 292, 100, 150, 30, "0.00", ContentAlignment.MiddleCenter, "Microsoft Sans Serif", 12, Cursors.Default, Color.Transparent)
+            PlayerOneTimerLabel.Visible = False
+            Controls.Add(PlayerOneTimerLabel)
+
+            'PlayerTwoTimerLabel
+            Main_Menu.RunTimeContructor(PlayerTwoTimerLabel, 542, 100, 150, 30, "0.00", ContentAlignment.MiddleCenter, "Microsoft Sans Serif", 12, Cursors.Default, Color.Transparent)
+            PlayerTwoTimerLabel.Visible = False
+            Controls.Add(PlayerTwoTimerLabel)
         End If
     End Sub
-
     Public Sub MakeTimersVisible()
         PlayerOneNameLabel.Visible = True
         PlayerTwoNameLabel.Visible = True
         PlayerOneTimerLabel.Visible = True
         PlayerTwoTimerLabel.Visible = True
     End Sub
+    Public Sub DisableTimers()
+        PlayerOneTimer.Enabled = False
+        PlayerTwoTimer.Enabled = False
+        PlayerOneNameLabel.Visible = False
+        PlayerTwoNameLabel.Visible = False
+        PlayerOneTimerLabel.Visible = False
+        PlayerTwoTimerLabel.Visible = False
+    End Sub
     Public Sub Countdown_Game_Setup(SubType As String, CountdownValue As Integer)
         TimerCreate(SubType)
         SetTimerValues(CountdownValue)
+        PlayerOneTimerLabel.Refresh()
+        PlayerTwoTimerLabel.Refresh()
     End Sub
-
     Public Sub Timed_Game_Setup(SubType As String)
         TimerCreate(SubType)
         SetTimerValues(0)
     End Sub
-
     Private Sub TimerCreate(SubType As String)
         If SubType = "Countdown" Then
+            RemoveHandler PlayerOneTimer.Tick, AddressOf CountupTimer_Tick
+            RemoveHandler PlayerTwoTimer.Tick, AddressOf CountupTimer_Tick
             AddHandler PlayerOneTimer.Tick, AddressOf CountdownTimer_Tick
             AddHandler PlayerTwoTimer.Tick, AddressOf CountdownTimer_Tick
         Else
+            RemoveHandler PlayerOneTimer.Tick, AddressOf CountdownTimer_Tick
+            RemoveHandler PlayerTwoTimer.Tick, AddressOf CountdownTimer_Tick
             AddHandler PlayerOneTimer.Tick, AddressOf CountupTimer_Tick
             AddHandler PlayerTwoTimer.Tick, AddressOf CountupTimer_Tick
         End If
         PlayerOneTimer.Interval = 10 '0.01 second interval
         PlayerTwoTimer.Interval = 10
-
-        ' PlayerOneTimerLabel
-        Main_Menu.RunTimeContructor(PlayerOneTimerLabel, 292, 100, 150, 30, "0.00", ContentAlignment.MiddleCenter, "Microsoft Sans Serif", 12, Cursors.Default, Color.Transparent)
-        PlayerOneTimerLabel.Visible = False
-        Controls.Add(PlayerOneTimerLabel)
-
-        'PlayerTwoTimerLabel
-        Main_Menu.RunTimeContructor(PlayerTwoTimerLabel, 542, 100, 150, 30, "0.00", ContentAlignment.MiddleCenter, "Microsoft Sans Serif", 12, Cursors.Default, Color.Transparent)
-        PlayerTwoTimerLabel.Visible = False
-        Controls.Add(PlayerTwoTimerLabel)
     End Sub
     Private Sub SetTimerValues(CountdownValue As Integer)
         PlayerOneTimerValue = CountdownValue ' Initial value for timer chosen by user, 0 if counting up.
         PlayerTwoTimerValue = CountdownValue
+        PlayerOneTimerLabel.Text = PlayerOneTimerValue
+        PlayerTwoTimerLabel.Text = PlayerTwoTimerValue
     End Sub
     Public Sub CountdownTimer_Tick(sender As Object, e As EventArgs) 'functionality must be added to swap the user
         If PlayerOneTimer.Enabled = True Then 'if player one timer is counting up
@@ -242,10 +257,12 @@
         End If
 
         If PlayerOneTimerValue <= 0 Or PlayerTwoTimerValue <= 0 Then
+            PlayerOneTimer.Enabled = False
+            PlayerTwoTimer.Enabled = False
             CurrentGame.GameOver("TimeOut")
         End If
     End Sub
-    Public Sub CountupTimer_Tick()
+    Public Sub CountupTimer_Tick(sender As Object, e As EventArgs)
         If PlayerOneTimer.Enabled = True Then 'if player one timer is counting up
             PlayerOneTimerValue += 0.01
             PlayerOneTimerLabel.Text = PlayerOneTimerValue
@@ -358,7 +375,6 @@
     Public Function GetGameType()
         Return CurrentGameType
     End Function
-
 End Class
 
 Public Class Game
@@ -387,7 +403,7 @@ Public Class Game
         PlayerTwoName = PlayerTwoUsername
         GameOverIndicator = False
         CurrentMove = 1
-        For x = 0 To 6
+        For x = 0 To 6 'resets grid
             For y = 0 To 5
                 BoardState(x, y) = Nothing
             Next
@@ -439,7 +455,7 @@ Public Class Game
                 End If
             Next
         Next
-        WinDiscovered = True
+        Return WinDiscovered
     End Function
     Public Function CheckForDrawingState(BoardState) 'checks to see if the board is full
         Dim Full As Boolean = True 'assumes board is full
@@ -453,33 +469,31 @@ Public Class Game
         Return Full
     End Function
     Public Sub GameOver(WinMode As String)
+        Game_Form.ToggleBoardInteractivity()
         ' record game
         Game_Form.Board_Update()
         If WinMode.ToLower = "timeout" Then
             ' opposite player wins
             If Game_Form.GetCurrentPlayer() = PlayerOneName Then
-                MsgBox(Game_Form.GetCurrentPlayer() & "ran out of time." & vbNewLine & PlayerTwoName & "has won the game.", MsgBoxStyle.DefaultButton1, "Game Ended")
+                MsgBox(Game_Form.GetCurrentPlayer() & " ran out of time. " & vbNewLine & PlayerTwoName & " has won the game.", MsgBoxStyle.DefaultButton1, "Game Ended")
             Else
-                MsgBox(Game_Form.GetCurrentPlayer() & "ran out of time." & vbNewLine & PlayerOneName & "has won the game.", MsgBoxStyle.DefaultButton1, "Game Ended")
+                MsgBox(Game_Form.GetCurrentPlayer() & " ran out of time. " & vbNewLine & PlayerOneName & " has won the game.", MsgBoxStyle.DefaultButton1, "Game Ended")
             End If
-        Else
-                If CheckForDrawingState(BoardState) Then 'game is drawn
-                GameOverIndicator = True
-                If WinMode = "Timed Game" Then 'If it is a timed game, the player with the lowest time wins
-                    If Game_Form.GetPlayerOneTimerValue >= Game_Form.GetPlayerTwoTimerValue Then 'if users had same time left (very unlikely), player one wins
-                        MsgBox("The game was a draw. " & PlayerTwoName & "Completed their moves quicker, so wins.", MsgBoxStyle.DefaultButton1, "Game Ended")
-                    ElseIf Game_Form.GetPlayerOneTimerValue < Game_Form.GetPlayerTwoTimerValue Then
-                        MsgBox("The game was a draw." & PlayerOneName & "Completed their moves quicker, so wins.", MsgBoxStyle.DefaultButton1, "Game Ended")
-                    End If
-                Else
-                    MsgBox("The game was a draw.", MsgBoxStyle.DefaultButton1, "Game Ended")
+        ElseIf CheckForDrawingState(BoardState) Then 'game is drawn
+            GameOverIndicator = True
+            If WinMode = "Timed Game" Then 'If it is a timed game, the player with the lowest time wins
+                If Game_Form.GetPlayerOneTimerValue >= Game_Form.GetPlayerTwoTimerValue Then 'if users had same time left (very unlikely), player one wins
+                    MsgBox("The game was a draw. " & PlayerTwoName & " completed their moves quicker, so wins.", MsgBoxStyle.DefaultButton1, "Game Ended")
+                ElseIf Game_Form.GetPlayerOneTimerValue < Game_Form.GetPlayerTwoTimerValue Then
+                    MsgBox("The game was a draw." & PlayerOneName & " completed their moves quicker, so wins.", MsgBoxStyle.DefaultButton1, "Game Ended")
                 End If
             Else
-                GameOverIndicator = True
-                MsgBox(Game_Form.GetCurrentPlayer() & vbNewLine & "has won the game.", MsgBoxStyle.DefaultButton1, "Game Ended")
+                MsgBox("The game was a draw.", MsgBoxStyle.DefaultButton1, "Game Ended")
             End If
+        Else
+            GameOverIndicator = True
+            MsgBox(Game_Form.GetCurrentPlayer() & vbNewLine & "has won the game.", MsgBoxStyle.DefaultButton1, "Game Ended")
         End If
-
         Game_Form.Hide()
         Main_Menu.Show()
     End Sub
@@ -589,14 +603,17 @@ Public Class Player_Vs_Computer_Game
         Dim BestXCoordinate As Integer
         Dim RandomMoveMade As Boolean
         Returns = Minimax(BoardState, Double.NegativeInfinity, Double.PositiveInfinity, 4, True)
-        If ChanceOfMistake >= CInt((100 + 1) * Rnd()) Then 'random number from 0 to 100. If it is smaller than the chance of mistake then it makes a mistake and picks a random spot.
+        If ChanceOfMistake <= CInt((100) * Rnd()) Then 'random number from 0 to 100. If it is smaller than the chance of mistake then it makes a mistake and picks a random spot.
             BestXCoordinate = Returns.item2
+            MakeComputerMove(BestXCoordinate)
         Else
             ' random spot
+            MsgBox("random move")
             Do
                 RandomMoveMade = True
-                If MakeComputerMove(CInt((6 + 1) * Rnd())) = False Then
-                    RandomMoveMade = False 'column was full, so trys again
+                BestXCoordinate = CInt((6) * Rnd())
+                If MakeComputerMove(BestXCoordinate) = False Then
+                    RandomMoveMade = False 'column was full, so tries again
                 End If
             Loop Until RandomMoveMade
         End If
@@ -617,7 +634,7 @@ Public Class Player_Vs_Computer_Game
         Dim BestEvaluation As Double
         Dim BestColumn As Integer
         Dim Searched As Boolean = False
-        Dim Count As Integer
+        Dim YCoordinate As Integer
         Dim Order() As Integer = {3, 4, 2, 5, 1, 6, 0} 'the order that board states should be searched
         If Depth = 0 Then  'if it has reached the end of its search depth
             Return (StaticEvaluation(CurrentBoardState), Nothing)
@@ -637,22 +654,23 @@ Public Class Player_Vs_Computer_Game
             BestEvaluation = Double.NegativeInfinity
             For x = 0 To 6
                 Searched = False
-                Count = 5
+                YCoordinate = 5
                 Do
-                    If CurrentBoardState(x, Count) = Nothing And Searched = False Then
+                    If CurrentBoardState(x, YCoordinate) = Nothing And Searched = False Then
                         Searched = True ' so loop only runs once per column
-                        CurrentBoardState(x, Count) = GetColourChar(GetPlayerTwoColour())
+                        CurrentBoardState(x, YCoordinate) = GetColourChar(GetPlayerTwoColour())
                         Evaluation = Minimax(CurrentBoardState, Alpha, Beta, Depth - 1, False)
                         If (Evaluation.item1 + Depth) > BestEvaluation Then 'if it is less moves in, the score is higher. if two moves win, the shortest win is favoured.
                             BestColumn = x
                             BestEvaluation = Evaluation.item1 + Depth
                         End If
-                        CurrentBoardState(x, Count) = Nothing
+                        CurrentBoardState(x, YCoordinate) = Nothing
                     End If
-                    Count -= 1
-                Loop Until Count = 0 Or Searched = True
+                    YCoordinate -= 1
+                Loop Until YCoordinate = 0 Or Searched = True
                 Alpha = Math.Max(Alpha, BestEvaluation)
                 If Alpha >= Beta Then
+                    ' Exit For
                     ' Return (BestEvaluation, BestColumn)
                 End If
             Next
@@ -661,22 +679,23 @@ Public Class Player_Vs_Computer_Game
             BestEvaluation = Double.PositiveInfinity
             For x = 0 To 6
                 Searched = False
-                Count = 5
+                YCoordinate = 5
                 Do
-                    If CurrentBoardState(x, Count) = Nothing And Searched = False Then
+                    If CurrentBoardState(x, YCoordinate) = Nothing And Searched = False Then
                         Searched = True ' so loop only runs once
-                        CurrentBoardState(x, Count) = GetColourChar(GetPlayerOneColour())
+                        CurrentBoardState(x, YCoordinate) = GetColourChar(GetPlayerOneColour())
                         Evaluation = Minimax(CurrentBoardState, Alpha, Beta, Depth - 1, True)
                         If (Evaluation.item1 + Depth) < BestEvaluation Then 'if it is less moves in, the score is higher. if two moves win, the shortest win is favoured. 
                             BestColumn = x
                             BestEvaluation = Evaluation.item1 + Depth
                         End If
-                        CurrentBoardState(x, Count) = Nothing
+                        CurrentBoardState(x, YCoordinate) = Nothing
                     End If
-                    Count -= 1
-                Loop Until Count = 0 Or Searched = True
+                    YCoordinate -= 1
+                Loop Until YCoordinate = 0 Or Searched = True
                 Beta = Math.Min(Beta, BestEvaluation)
                 If Alpha >= Beta Then
+                    'Exit For
                     ' Return (BestEvaluation, BestColumn)
                 End If
             Next
@@ -685,10 +704,12 @@ Public Class Player_Vs_Computer_Game
     End Function
     Public Function EvaluateScore(EvaluatingSection() As Char, AnalysisColour As Char)
         Dim NumberOfTilesInSequence = 0
+        Dim NumberOfOppositeTilesInSequence = 0
         Dim SectionScore As Integer
         For i = 0 To 3
             If EvaluatingSection(i) <> AnalysisColour And EvaluatingSection(i) <> Nothing Then 'if the sequence has the opponents colour anywhere in it, it is not viable
-                Return 0
+                NumberOfOppositeTilesInSequence += 1
+                ' Return 0
             ElseIf EvaluatingSection(i) = AnalysisColour Then
                 NumberOfTilesInSequence += 1
             End If
@@ -701,6 +722,9 @@ Public Class Player_Vs_Computer_Game
             SectionScore += 50
         ElseIf NumberOfTilesInSequence = 4 Then '4/4 tiles are filled by one colour
             SectionScore += 2000
+        End If
+        If NumberOfOppositeTilesInSequence = 3 And NumberOfTilesInSequence = 0 Then '3 of opposite player, unblocked
+            SectionScore -= 18
         End If
         Return SectionScore
     End Function

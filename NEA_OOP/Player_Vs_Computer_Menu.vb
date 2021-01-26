@@ -21,7 +21,7 @@
     Private StartingPlayerButton As New Button
 
     ' Variable Declarations
-    Private Username As String
+    Private Username As String = "Player"
     Private FirstTimeRunning As Boolean = True ' some code only needs to run when it is not the first time 
 
     ' Main Code
