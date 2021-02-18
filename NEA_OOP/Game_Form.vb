@@ -103,14 +103,14 @@
     Public Sub Board_Setup()
         Dim XPos, YPos As Integer
         ' Board
-        XPos = 150
+        XPos = 146
         For x = 0 To 6
-            YPos = 235
+            YPos = 231
             For y = 0 To 5
                 BoardLocations(x, y) = New PictureBox
                 BoardLocations(x, y) = New PictureBox
                 BoardLocations(x, y).Location = New Point(XPos, YPos)
-                BoardLocations(x, y).Size = New Size(90, 90)
+                BoardLocations(x, y).Size = New Size(98, 98)
                 BoardLocations(x, y).SizeMode = PictureBoxSizeMode.Zoom ' Set to fully display image without warping it
                 BoardLocations(x, y).BackColor = Color.Blue 'since I cannot make it transparent, I made the background blue to match the box
                 BoardLocations(x, y).Enabled = False
@@ -511,7 +511,7 @@ Public Class Game
         Next
         Return MoveMade
     End Function
-    Public Overridable Sub SwitchMove() '
+    Public Overridable Sub SwitchMove()
         UpdateCurrentMove()
         Game_Form.Board_Update()
         Game_Form.UpdateCurrentMoveVisual()
@@ -670,8 +670,7 @@ Public Class Player_Vs_Computer_Game
                 Loop Until YCoordinate = 0 Or Searched = True
                 Alpha = Math.Max(Alpha, BestEvaluation)
                 If Alpha >= Beta Then
-                    ' Exit For
-                    ' Return (BestEvaluation, BestColumn)
+                    Return (BestEvaluation, BestColumn)
                 End If
             Next
             Return (BestEvaluation, BestColumn)
@@ -695,8 +694,7 @@ Public Class Player_Vs_Computer_Game
                 Loop Until YCoordinate = 0 Or Searched = True
                 Beta = Math.Min(Beta, BestEvaluation)
                 If Alpha >= Beta Then
-                    'Exit For
-                    ' Return (BestEvaluation, BestColumn)
+                    Return (BestEvaluation, BestColumn)
                 End If
             Next
             Return (BestEvaluation, BestColumn)

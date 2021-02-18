@@ -211,5 +211,4 @@
             CanContinueIndicatorLabel.Visible = True
         End If
     End Sub
-
 End Class
