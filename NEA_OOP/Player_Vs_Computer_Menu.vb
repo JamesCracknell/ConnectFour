@@ -60,7 +60,6 @@
             UsernameEnterButton.BackColor = Color.Transparent
         End If
     End Sub
-
     Public Sub Menu_Setup()
         ' ChoiceSubtitleLabel
         Main_Menu.RunTimeContructor(ChoiceSubtitleLabel, 0, 40, 500, 20, "Customise settings for the game:", ContentAlignment.MiddleCenter, "Microsoft Sans Serif", 12, Cursors.Default, Color.Transparent)
@@ -141,7 +140,6 @@
 
         BackgroundImage.SendToBack()
     End Sub
-
     Public Sub UsernameEnterButton_Click(sender As Object, e As EventArgs)
         If UsernameEnterButton.BackColor = Color.IndianRed Then UsernameEnterButton.BackColor = Color.Transparent 'if the colour is red, resets it
         IncorrectInputLabel.Visible = False
@@ -176,7 +174,6 @@
             DifficultyDescriptionLabel.Text = "Easy Difficulty: The computer controlled player is easy to beat." & vbNewLine & "Recommended for new players."
         End If
     End Sub
-
     Public Sub ColourToggleButton_Click(sender As Object, e As EventArgs)
         If sender.Text = "Red" Then
             ColourToggleButton.Text = "Yellow"
@@ -186,7 +183,6 @@
             ColourToggleButton.ForeColor = Color.Red
         End If
     End Sub
-
     Public Sub StartingPlayerButton_Click(sender As Object, e As EventArgs)
         If sender.Text = Username Then
             StartingPlayerButton.Text = "Computer Player"

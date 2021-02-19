@@ -167,7 +167,7 @@
             Next
         End If
     End Sub
-    Public Sub StartGameButton_Click()
+    Public Sub StartGameButton_Click(sender As Object, e As EventArgs)
         Controls.Remove(StartGameButton)
         CurrentGame.startgame
     End Sub
@@ -227,14 +227,14 @@
         SetTimerValues(0)
     End Sub
     Private Sub TimerCreate(SubType As String)
+        RemoveHandler PlayerOneTimer.Tick, AddressOf CountupTimer_Tick 'removes previous timers (from previous games played) so that they cannot interfere with each other
+        RemoveHandler PlayerTwoTimer.Tick, AddressOf CountupTimer_Tick
+        RemoveHandler PlayerOneTimer.Tick, AddressOf CountdownTimer_Tick
+        RemoveHandler PlayerTwoTimer.Tick, AddressOf CountdownTimer_Tick
         If SubType = "Countdown" Then
-            RemoveHandler PlayerOneTimer.Tick, AddressOf CountupTimer_Tick
-            RemoveHandler PlayerTwoTimer.Tick, AddressOf CountupTimer_Tick
             AddHandler PlayerOneTimer.Tick, AddressOf CountdownTimer_Tick
             AddHandler PlayerTwoTimer.Tick, AddressOf CountdownTimer_Tick
         Else
-            RemoveHandler PlayerOneTimer.Tick, AddressOf CountdownTimer_Tick
-            RemoveHandler PlayerTwoTimer.Tick, AddressOf CountdownTimer_Tick
             AddHandler PlayerOneTimer.Tick, AddressOf CountupTimer_Tick
             AddHandler PlayerTwoTimer.Tick, AddressOf CountupTimer_Tick
         End If
@@ -270,6 +270,10 @@
             PlayerTwoTimerValue += 0.01
             PlayerTwoTimerLabel.Text = PlayerTwoTimerValue
         End If
+    End Sub
+    Public Sub StopTimers()
+        PlayerOneTimer.Stop()
+        PlayerTwoTimer.Stop()
     End Sub
     Public Function GetPlayerOneTimerStatus() As String
         If PlayerOneTimer.Enabled = True Then
@@ -344,8 +348,75 @@
             Next
         Next
     End Sub
+    Public Sub UpdateWinningBoard(WinningColourChar)
+        Dim Returns
+        Dim x As Integer
+        Dim y As Integer
+        Dim WinType As String
+        Dim PictureName As String
+        For x = 0 To 6 'changes all tokens to transparent
+            For y = 0 To 5
+                If CurrentGame.GetFilledStatus(x, y) = "Y" Then
+                    BoardLocations(x, y).Image = Image.FromFile("YellowTokenTransparent.png")
+                ElseIf CurrentGame.GetFilledStatus(x, y) = "R" Then
+                    BoardLocations(x, y).Image = Image.FromFile("RedTokenTransparent.png")
+                Else
+                    BoardLocations(x, y).Image = Nothing 'if an image is there that shouldn't be there it is cleared (such as when the game is reset)
+                End If
+            Next
+        Next
+
+        'Checks which win occurred
+        If CurrentGame.CheckVertical(WinningColourChar).item1 <> "1000" Then ' Verticals 
+            Returns = CurrentGame.CheckVertical(WinningColourChar)
+            WinType = "Vertical"
+        ElseIf CurrentGame.CheckHorizontal(WinningColourChar).item1 <> "1000" Then  ' Horizontals
+            Returns = CurrentGame.CheckHorizontal(WinningColourChar)
+            WinType = "Horizontal"
+        ElseIf CurrentGame.CheckDiagonalOne(WinningColourChar).item1 <> "1000" Then ' Diagonals
+            Returns = CurrentGame.CheckDiagonalOne(WinningColourChar)
+            WinType = "DiagonalOne"
+        ElseIf CurrentGame.CheckDiagonalTwo(WinningColourChar).item1 <> "1000" Then
+            Returns = CurrentGame.CheckDiagonalTwo(WinningColourChar)
+            WinType = "DiagonalTwo"
+        End If
+        x = Returns.item1
+        y = Returns.item2
+
+        If CurrentGame.GetFilledStatus(x, y) = "Y" Then
+            PictureName = "YellowToken.png"
+        ElseIf CurrentGame.GetFilledStatus(x, y) = "R" Then
+            PictureName = "RedToken.png"
+        End If
+
+        If WinType = "Vertical" Then
+            For i = 0 To 3
+                BoardLocations(x, y + i).Image = Image.FromFile(PictureName)
+            Next
+        ElseIf WinType = "Horizontal" Then
+            For i = 0 To 3
+                BoardLocations(x + i, y).Image = Image.FromFile(PictureName)
+            Next
+        ElseIf WinType = "DiagonalOne" Then
+            For i = 0 To 3
+                BoardLocations(x + i, y + i).Image = Image.FromFile(PictureName)
+            Next
+        ElseIf WinType = "DiagonalTwo" Then
+            For i = 0 To 3
+                BoardLocations(x + i, y - i).Image = Image.FromFile(PictureName)
+            Next
+        End If
+    End Sub
+
+    Public Sub Board_Refresh()
+        For x = 0 To 6
+            For Y = 0 To 5
+                BoardLocations(x, Y).Refresh()
+            Next
+        Next
+    End Sub
     Private Sub Board_Click(sender As Object, e As EventArgs)
-        If CurrentGame.make_move(sender.tag) Then
+        If CurrentGame.makemove(sender.tag) Then
             CurrentGame.SwitchMove()
         End If
     End Sub
@@ -422,40 +493,57 @@ Public Class Game
     Public Overridable Function CheckForWinningState(BoardState, CurrentPlayer) 'searches 2D array of char (boardstate) for 4 in a row
         Dim WinDiscovered As Boolean = False
         Dim CurrentPlayerChar As Char = GetColourChar(CurrentPlayer)
-        ' Verticals
+        If CheckVertical(CurrentPlayerChar).item1 <> "1000" Then ' Verticals
+            WinDiscovered = True
+        ElseIf CheckHorizontal(CurrentPlayerChar).item1 <> "1000" Then  ' Horizontals
+            WinDiscovered = True
+        ElseIf CheckDiagonalOne(CurrentPlayerChar).item1 <> "1000" Then ' Diagonals
+            WinDiscovered = True
+        ElseIf CheckDiagonalTwo(CurrentPlayerChar).item1 <> "1000" Then
+            WinDiscovered = True
+        End If
+        Return WinDiscovered
+    End Function
+    Public Function CheckVertical(CurrentPlayerChar)
         For y = 0 To 2
             For x = 0 To 6
                 If BoardState(x, y) = BoardState(x, y + 1) And BoardState(x, y + 1) = BoardState(x, y + 2) And BoardState(x, y + 2) = BoardState(x, y + 3) And BoardState(x, y) = CurrentPlayerChar Then 'cant be blank
                     'if a sequence of 4 is detected, it must be a win for the current player, else it would have been detected by a previous check.
-                    WinDiscovered = True
+                    Return (x, y)
                 End If
             Next
         Next
-        ' Horizontals
+        Return ("1000", "") 'returns 1000 (an impossible position) if the win is not detected
+    End Function
+    Public Function CheckHorizontal(CurrentPlayerChar)
         For x = 0 To 3
             For y = 0 To 5
                 If BoardState(x, y) = BoardState(x + 1, y) And BoardState(x + 1, y) = BoardState(x + 2, y) And BoardState(x + 2, y) = BoardState(x + 3, y) And BoardState(x, y) = CurrentPlayerChar Then 'if all 4 are equal
-                    WinDiscovered = True
+                    Return (x, y)
                 End If
             Next
         Next
-        ' Diagonals
+        Return ("1000", "")
+    End Function
+    Public Function CheckDiagonalOne(CurrentPlayerChar)
         For x = 0 To 3
             For y = 0 To 2
                 If BoardState(x, y) = BoardState(x + 1, y + 1) And BoardState(x + 1, y + 1) = BoardState(x + 2, y + 2) And BoardState(x + 2, y + 2) = BoardState(x + 3, y + 3) And BoardState(x, y) = CurrentPlayerChar Then
-                    WinDiscovered = True
+                    Return (x, y)
                 End If
             Next
         Next
-
+        Return ("1000", "")
+    End Function
+    Public Function CheckDiagonalTwo(CurrentPlayerChar)
         For x = 0 To 3
             For y = 3 To 5
                 If BoardState(x, y) = BoardState(x + 1, y - 1) And BoardState(x + 1, y - 1) = BoardState(x + 2, y - 2) And BoardState(x + 2, y - 2) = BoardState(x + 3, y - 3) And BoardState(x, y) = CurrentPlayerChar Then
-                    WinDiscovered = True
+                    Return (x, y)
                 End If
             Next
         Next
-        Return WinDiscovered
+        Return ("1000", "")
     End Function
     Public Function CheckForDrawingState(BoardState) 'checks to see if the board is full
         Dim Full As Boolean = True 'assumes board is full
@@ -490,8 +578,9 @@ Public Class Game
             Else
                 MsgBox("The game was a draw.", MsgBoxStyle.DefaultButton1, "Game Ended")
             End If
-        Else
+        Else 'Game has been won by a 4 in a row
             GameOverIndicator = True
+            Game_Form.UpdateWinningBoard(GetColourChar(GetCurrentColour()))
             MsgBox(Game_Form.GetCurrentPlayer() & vbNewLine & "has won the game.", MsgBoxStyle.DefaultButton1, "Game Ended")
         End If
         Game_Form.Hide()
@@ -500,12 +589,30 @@ Public Class Game
     Public Function GetGameOverIndicator()
         Return GameOverIndicator
     End Function
-    Public Function Make_Move(Location)
+    Public Function MakeAnimatedMove(XCoordinate, YCoordinate, ColourChar)
+        Game_Form.ToggleBoardInteractivity() 'temporarily disables board
+        For Y = 0 To YCoordinate
+            If Y > 0 Then
+                BoardState(XCoordinate, Y - 1) = Nothing
+            End If
+            BoardState(XCoordinate, Y) = ColourChar
+            Game_Form.Board_Update()
+            Game_Form.Board_Refresh()
+            Threading.Thread.CurrentThread.Sleep(40)
+        Next
+        If Game_Form.GetCurrentPlayer() = PlayerOneName Then 'restarts timers
+            Game_Form.SetPlayerOneTimerStatus("Enable")
+        Else 'if player two's move
+            Game_Form.SetPlayerTwoTimerStatus("Enable")
+        End If
+        Game_Form.ToggleBoardInteractivity() 're-enables board
+    End Function
+    Public Function MakeMove(Location)
         Dim Column As Integer = (CInt(Location)) \ 6
         Dim MoveMade As Boolean = False
         For y = 5 To 0 Step -1 'counts backwards (up)
             If GetFilledStatus(Column, y) <> "Y" And GetFilledStatus(Column, y) <> "R" And MoveMade = False Then
-                BoardState(Column, y) = GetColourChar(GetCurrentColour())
+                MakeAnimatedMove(Column, y, GetColourChar(GetCurrentColour()))
                 MoveMade = True
             End If
         Next
@@ -608,7 +715,6 @@ Public Class Player_Vs_Computer_Game
             MakeComputerMove(BestXCoordinate)
         Else
             ' random spot
-            MsgBox("random move")
             Do
                 RandomMoveMade = True
                 BestXCoordinate = CInt((6) * Rnd())
@@ -623,7 +729,7 @@ Public Class Player_Vs_Computer_Game
         Dim MoveMade As Boolean = False
         For y = 5 To 0 Step -1 'counts backwards (up)
             If GetFilledStatus(XCoordinate, y) <> "Y" And GetFilledStatus(XCoordinate, y) <> "R" And MoveMade = False Then
-                BoardState(XCoordinate, y) = GetColourChar(ComputerColour)
+                MakeAnimatedMove(XCoordinate, y, GetColourChar(ComputerColour))
                 MoveMade = True
             End If
         Next
@@ -722,7 +828,7 @@ Public Class Player_Vs_Computer_Game
             SectionScore += 2000
         End If
         If NumberOfOppositeTilesInSequence = 3 And NumberOfTilesInSequence = 0 Then '3 of opposite player, unblocked
-            SectionScore -= 18
+            SectionScore -= 40
         End If
         Return SectionScore
     End Function

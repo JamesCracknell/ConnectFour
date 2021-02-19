@@ -66,7 +66,6 @@
             SubmitPlayerTwoNameButton.BackColor = Color.Transparent
         End If
     End Sub
-
     Public Sub Menu_Setup()
         ' PlayerChoiceLabel
         Main_Menu.RunTimeContructor(PlayerChoiceLabel, 0, 50, 500, 20, "Customise settings for the game:", ContentAlignment.MiddleCenter, "Microsoft Sans Serif", 12, Cursors.Default, Color.Transparent)

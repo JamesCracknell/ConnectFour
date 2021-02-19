@@ -113,6 +113,12 @@
     <Compile Include="Player_Vs_Player_Menu.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Previous_Games.Designer.vb">
+      <DependentUpon>Previous_Games.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Previous_Games.vb">
+      <SubType>Form</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Game_Form.resx">
@@ -132,6 +138,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Player_Vs_Player_Menu.resx">
       <DependentUpon>Player_Vs_Player_Menu.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Previous_Games.resx">
+      <DependentUpon>Previous_Games.vb</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

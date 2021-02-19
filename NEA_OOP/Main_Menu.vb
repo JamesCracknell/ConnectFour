@@ -7,7 +7,7 @@ Public Class Main_Menu
     Private CreditLabel As New Label
     Private PlayerVsPlayerButton As New Button
     Private PlayerVsComputerButton As New Button
-    Private LeaderBoardButton As New Button
+    Private PreviousGamesButton As New Button
     Private GameTypeChoiceLabel As New Label
     Private Shadows BackgroundImage As New PictureBox
     Private QuitButton As New Button
@@ -69,10 +69,10 @@ Public Class Main_Menu
         RunTimeContructor(PlayerVsComputerButton, 342, 260, 300, 50, "Player vs Computer", ContentAlignment.MiddleCenter, "Microsoft Sans Serif", 9.75, Cursors.Hand, Color.Transparent)
         AddHandler PlayerVsComputerButton.Click, AddressOf PlayerVsComputerButton_Click
         Controls.Add(PlayerVsComputerButton)
-        ' LeaderBoardButton
-        RunTimeContructor(LeaderBoardButton, 342, 320, 300, 50, "View Previous Game", ContentAlignment.MiddleCenter, "Microsoft Sans Serif", 9.75, Cursors.Hand, Color.Transparent)
-        AddHandler LeaderBoardButton.Click, AddressOf LeaderBoardButton_Click
-        Controls.Add(LeaderBoardButton)
+        ' PreviousGamesButton
+        RunTimeContructor(PreviousGamesButton, 342, 320, 300, 50, "View Previous Games", ContentAlignment.MiddleCenter, "Microsoft Sans Serif", 9.75, Cursors.Hand, Color.Transparent)
+        AddHandler PreviousGamesButton.Click, AddressOf PreviousGamesButton_Click
+        Controls.Add(PreviousGamesButton)
         ' QuitButton
         RunTimeContructor(QuitButton, 342, 380, 300, 50, "Quit Game", ContentAlignment.MiddleCenter, "Microsoft Sans Serif", 9.75, Cursors.Hand, Color.Transparent)
         AddHandler QuitButton.Click, AddressOf QuitButton_Click
@@ -87,8 +87,9 @@ Public Class Main_Menu
         Me.Hide()
         Player_Vs_Computer_Menu.Form_Setup()
     End Sub
-    Public Sub LeaderBoardButton_Click(sender As Object, e As EventArgs)
-
+    Public Sub PreviousGamesButton_Click(sender As Object, e As EventArgs)
+        Me.Hide()
+        Previous_Games.Form_Setup()
     End Sub
     Sub QuitButton_Click(sender As Object, e As EventArgs) 'if quitbutton is clicked
         Me.Close()
