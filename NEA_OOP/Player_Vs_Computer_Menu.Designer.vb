@@ -30,7 +30,7 @@ Partial Class Player_Vs_Computer_Menu
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(800, 450)
         Me.Name = "Player_Vs_Computer_Menu"
-        Me.Text = "Player_Vs_Computer_Menu"
+        Me.Text = "Player vs Computer Menu"
         Me.ResumeLayout(False)
 
     End Sub

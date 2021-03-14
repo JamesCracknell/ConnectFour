@@ -30,7 +30,7 @@ Partial Class Game_Form
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(800, 450)
         Me.Name = "Game_Form"
-        Me.Text = "Game_Form"
+        Me.Text = "Connect Four Game"
         Me.ResumeLayout(False)
 
     End Sub

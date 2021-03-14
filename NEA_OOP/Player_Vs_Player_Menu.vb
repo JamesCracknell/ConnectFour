@@ -1,4 +1,4 @@
-﻿Public Class Player_Vs_Player_Menu
+﻿Public Class Player_Vs_Player_Menu 'Menu for configuring the player vs player mode
 
     ' Control Declarations
 
@@ -10,7 +10,7 @@
     Private PlayerNameTextBox As New TextBox
     Private SubmitPlayerOneNameButton As New Button
     Private SubmitPlayerTwoNameButton As New Button
-    Private TimerOptionButton As New Button 'MAKE THIS A VISUAL TOGGLE
+    Private TimerOptionButton As New Button
     Private TimerOptionLabel As New Label
     Private TimerExplanationLabel As New Label
     Private PlayerOneCurrentNameLabel As New Label
@@ -24,30 +24,23 @@
     Private ContinueButton As New Button
     Private TimeCustomiserTextbox As New TextBox
     Private TimeCustomiserLabel As New Label
+    Private TimeCustomiserErrorLabel As New Label
 
     ' Variable Declarations
     Private FirstTimeRunning As Boolean = True ' some code only needs to run when it is not the first time 
 
     ' Main Code
-    Public Sub Form_Setup()
+    Public Sub This_Form_Setup() 'sets up form properties
         Me.Show()
         If FirstTimeRunning Then
-            MaximizeBox = False 'disable user making the window a full screen
-            MinimizeBox = False 'disable user minimizing 
-            FormBorderStyle = FormBorderStyle.FixedSingle 'disable user changing window size
-            Width = 1000 'sets width of window
-            Height = 800 'sets height of window 
-            StartPosition = FormStartPosition.Manual 'allows me to change the location of the window
-            Location = New Point(0, 0) 'moves window to top left
-            BackColor = Color.LightBlue 'sets background colour to blue
-            Icon = New Icon("icon.ico") 'sets icon to custom icon
+            Processes.Form_Setup(Me)
             ' Form Title
             Title.Location = New Point(242, 5)
             Title.Size = New Size(500, 50)
             Title.SizeMode = PictureBoxSizeMode.Zoom
             Title.Image = Image.FromFile("Title.png")
             Controls.Add(Title)
-            Main_Menu.RunTimeContructor(CreditLabel, 0, 748, 984, 13, "James Cracknell - 191673", ContentAlignment.MiddleCenter, "Microsoft Sans Serif", 8.25, Cursors.Default, Color.Transparent)
+            Processes.RunTimeContructor(CreditLabel, 0, 748, 984, 13, "James Cracknell - 191673", ContentAlignment.MiddleCenter, "Microsoft Sans Serif", 8.25, Cursors.Default, Color.Transparent)
             Controls.Add(CreditLabel)
             ' Background Image
             BackgroundImage = New PictureBox
@@ -66,116 +59,121 @@
             SubmitPlayerTwoNameButton.BackColor = Color.Transparent
         End If
     End Sub
-    Public Sub Menu_Setup()
+    Private Sub Menu_Setup()  'adds form controls
         ' PlayerChoiceLabel
-        Main_Menu.RunTimeContructor(PlayerChoiceLabel, 0, 50, 500, 20, "Customise settings for the game:", ContentAlignment.MiddleCenter, "Microsoft Sans Serif", 12, Cursors.Default, Color.Transparent)
+        Processes.RunTimeContructor(PlayerChoiceLabel, 0, 50, 500, 20, "Customise settings for the game:", ContentAlignment.MiddleCenter, "Microsoft Sans Serif", 12, Cursors.Default, Color.Transparent)
         Controls.Add(PlayerChoiceLabel)
         PlayerChoiceLabel.Parent = BackgroundImage 'sets the label's parent to the background image 
         PlayerChoiceLabel.Refresh() 'refreshes the label, to take on its new properties
 
         ' InputPlayerNameLabel
-        Main_Menu.RunTimeContructor(InputPlayerNameLabel, 0, 70, 500, 20, "Enter player names below:", ContentAlignment.TopCenter, "Microsoft Sans Serif", 10.25, Cursors.Default, Color.Transparent)
+        Processes.RunTimeContructor(InputPlayerNameLabel, 0, 70, 500, 20, "Enter player names below:", ContentAlignment.TopCenter, "Microsoft Sans Serif", 10.25, Cursors.Default, Color.Transparent)
         Controls.Add(InputPlayerNameLabel)
         InputPlayerNameLabel.Parent = BackgroundImage 'sets the label's parent to the background image 
         InputPlayerNameLabel.Refresh()
 
         ' PlayerNameTextBox
-        Main_Menu.RunTimeContructor(PlayerNameTextBox, 342, 190, 300, 50, "", ContentAlignment.TopCenter, "Microsoft Sans Serif", 9.75, Cursors.Hand, Color.Empty) 'color.empty is a null colour, allowing for controls that do not allow customised back colours
+        Processes.RunTimeContructor(PlayerNameTextBox, 342, 190, 300, 50, "", ContentAlignment.TopCenter, "Microsoft Sans Serif", 9.75, Cursors.Hand, Color.Empty) 'color.empty is a null colour, allowing for controls that do not allow customised back colours
         Controls.Add(PlayerNameTextBox)
 
         ' SubmitPlayerOneNameButton
-        Main_Menu.RunTimeContructor(SubmitPlayerOneNameButton, 362, 220, 120, 50, "Submit Player One Name", ContentAlignment.MiddleCenter, "Microsoft Sans Serif", 9.75, Cursors.Hand, Color.Transparent)
+        Processes.RunTimeContructor(SubmitPlayerOneNameButton, 362, 220, 120, 50, "Submit Player One Name", ContentAlignment.MiddleCenter, "Microsoft Sans Serif", 9.75, Cursors.Hand, Color.Transparent)
         AddHandler SubmitPlayerOneNameButton.Click, AddressOf SubmitPlayerNameButton_Click
         SubmitPlayerOneNameButton.Name = "SubmitPlayerOneNameButton"
         Controls.Add(SubmitPlayerOneNameButton)
 
         ' PlayerOneCurrentNameLabel
-        Main_Menu.RunTimeContructor(PlayerOneCurrentNameLabel, 113, 165, 132, 20, "", ContentAlignment.MiddleCenter, "Microsoft Sans Serif", 9, Cursors.Default, Color.Transparent)
+        Processes.RunTimeContructor(PlayerOneCurrentNameLabel, 113, 165, 132, 20, "", ContentAlignment.MiddleCenter, "Microsoft Sans Serif", 9, Cursors.Default, Color.Transparent)
         Controls.Add(PlayerOneCurrentNameLabel)
         PlayerOneCurrentNameLabel.Parent = BackgroundImage 'sets the label's parent to the background image 
         PlayerOneCurrentNameLabel.Refresh()
 
         ' SubmitPlayerTwoNameButton
-        Main_Menu.RunTimeContructor(SubmitPlayerTwoNameButton, 502, 220, 120, 50, "Submit Player Two Name", ContentAlignment.MiddleCenter, "Microsoft Sans Serif", 9.75, Cursors.Hand, Color.Transparent)
+        Processes.RunTimeContructor(SubmitPlayerTwoNameButton, 502, 220, 120, 50, "Submit Player Two Name", ContentAlignment.MiddleCenter, "Microsoft Sans Serif", 9.75, Cursors.Hand, Color.Transparent)
         AddHandler SubmitPlayerTwoNameButton.Click, AddressOf SubmitPlayerNameButton_Click
         SubmitPlayerTwoNameButton.Name = "SubmitPlayerTwoNameButton"
         Controls.Add(SubmitPlayerTwoNameButton)
 
         ' PlayerTwoCurrentNameLabel
-        Main_Menu.RunTimeContructor(PlayerTwoCurrentNameLabel, 253, 165, 132, 20, "", ContentAlignment.MiddleCenter, "Microsoft Sans Serif", 9, Cursors.Default, Color.Transparent)
+        Processes.RunTimeContructor(PlayerTwoCurrentNameLabel, 253, 165, 132, 20, "", ContentAlignment.MiddleCenter, "Microsoft Sans Serif", 9, Cursors.Default, Color.Transparent)
         Controls.Add(PlayerTwoCurrentNameLabel)
         PlayerTwoCurrentNameLabel.Parent = BackgroundImage 'sets the label's parent to the background image 
         PlayerTwoCurrentNameLabel.Refresh()
 
         ' IncorrectInputLabel
-        Main_Menu.RunTimeContructor(IncorrectInputLabel, 342, 285, 300, 22, "", ContentAlignment.MiddleCenter, "Microsoft Sans Serif", 9, Cursors.Default, Color.IndianRed)
+        Processes.RunTimeContructor(IncorrectInputLabel, 342, 285, 300, 22, "", ContentAlignment.MiddleCenter, "Microsoft Sans Serif", 9, Cursors.Default, Color.IndianRed)
         Controls.Add(IncorrectInputLabel)
         IncorrectInputLabel.Visible = False
 
         ' TimerOptionLabel
-        Main_Menu.RunTimeContructor(TimerOptionLabel, 100, 205, 300, 20, "Would you like to add a timer to the game?", ContentAlignment.MiddleCenter, "Microsoft Sans Serif", 10.25, Cursors.Default, Color.Transparent)
+        Processes.RunTimeContructor(TimerOptionLabel, 100, 205, 300, 20, "Would you like to add a timer to the game?", ContentAlignment.MiddleCenter, "Microsoft Sans Serif", 10.25, Cursors.Default, Color.Transparent)
         Controls.Add(TimerOptionLabel)
         TimerOptionLabel.Parent = BackgroundImage 'sets the label's parent to the background image 
         TimerOptionLabel.Refresh()
 
         ' TimerOptionButton
-        Main_Menu.RunTimeContructor(TimerOptionButton, 392, 327, 200, 30, "Timed Game", ContentAlignment.MiddleCenter, "Microsoft Sans Serif", 9.75, Cursors.Hand, Color.Transparent)
+        Processes.RunTimeContructor(TimerOptionButton, 392, 327, 200, 30, "Timed Game", ContentAlignment.MiddleCenter, "Microsoft Sans Serif", 9.75, Cursors.Hand, Color.Transparent)
         AddHandler TimerOptionButton.Click, AddressOf TimerOptionButton_Click
         Controls.Add(TimerOptionButton)
 
         ' TimerExplanationLabel
-        Main_Menu.RunTimeContructor(TimerExplanationLabel, 25, 255, 450, 40, "Timed Game: The game is timed." & vbNewLine & "In the event of a draw, the player with the lowest time wins.", ContentAlignment.MiddleCenter, "Microsoft Sans Serif", 9, Cursors.Default, Color.Transparent)
+        Processes.RunTimeContructor(TimerExplanationLabel, 25, 255, 450, 40, "Timed Game: The game is timed." & vbNewLine & "In the event of a draw, the player with the lowest time wins.", ContentAlignment.MiddleCenter, "Microsoft Sans Serif", 9, Cursors.Default, Color.Transparent)
         Controls.Add(TimerExplanationLabel)
         TimerExplanationLabel.Parent = BackgroundImage 'sets the label's parent to the background image 
         TimerExplanationLabel.Refresh()
 
         ' TimeCustomiserLabel
-        Main_Menu.RunTimeContructor(TimeCustomiserLabel, 745, 320, 225, 40, "Enter the time to count down from:" & vbNewLine & "(in seconds)", ContentAlignment.MiddleCenter, "Microsoft Sans Serif", 10.25, Cursors.Default, Color.Transparent)
+        Processes.RunTimeContructor(TimeCustomiserLabel, 745, 320, 225, 40, "Enter the time to count down from:" & vbNewLine & "(in seconds)", ContentAlignment.MiddleCenter, "Microsoft Sans Serif", 10.25, Cursors.Default, Color.Transparent)
         TimeCustomiserLabel.Visible = False
         Controls.Add(TimeCustomiserLabel)
 
         ' TimeCustomiserTextbox
-        Main_Menu.RunTimeContructor(TimeCustomiserTextbox, 755, 360, 205, 30, "120", ContentAlignment.TopCenter, "Microsoft Sans Serif", 9.75, Cursors.Hand, Color.Empty)
+        Processes.RunTimeContructor(TimeCustomiserTextbox, 755, 360, 205, 30, "120", ContentAlignment.TopCenter, "Microsoft Sans Serif", 9.75, Cursors.Hand, Color.Empty)
         AddHandler TimeCustomiserTextbox.Click, AddressOf TimerOptionButton_Click
         TimeCustomiserTextbox.Visible = False
         Controls.Add(TimeCustomiserTextbox)
 
+        'TimeCustomiserErrorLabel
+        Processes.RunTimeContructor(TimeCustomiserErrorLabel, 745, 385, 225, 20, "You must enter a number.", ContentAlignment.MiddleCenter, "Microsoft Sans Serif", 10.25, Cursors.Default, Color.IndianRed)
+        TimeCustomiserErrorLabel.Visible = False
+        Controls.Add(TimeCustomiserErrorLabel)
+
         ' StartingPlayerLabel
-        Main_Menu.RunTimeContructor(StartingPlayerLabel, 25, 280, 450, 40, "Choose the starting player:", ContentAlignment.MiddleCenter, "Microsoft Sans Serif", 10.25, Cursors.Default, Color.Transparent)
+        Processes.RunTimeContructor(StartingPlayerLabel, 25, 280, 450, 40, "Choose the starting player:", ContentAlignment.MiddleCenter, "Microsoft Sans Serif", 10.25, Cursors.Default, Color.Transparent)
         Controls.Add(StartingPlayerLabel)
         StartingPlayerLabel.Parent = BackgroundImage 'sets the label's parent to the background image
         StartingPlayerLabel.Refresh()
 
         ' StartingPlayerButton
-        Main_Menu.RunTimeContructor(StartingPlayerButton, 392, 415, 200, 30, "Player One", ContentAlignment.MiddleCenter, "Microsoft Sans Serif", 10.25, Cursors.Hand, Color.Transparent)
+        Processes.RunTimeContructor(StartingPlayerButton, 392, 415, 200, 30, "Player One", ContentAlignment.MiddleCenter, "Microsoft Sans Serif", 10.25, Cursors.Hand, Color.Transparent)
         AddHandler StartingPlayerButton.Click, AddressOf StartingPlayerButton_Click
         Controls.Add(StartingPlayerButton)
 
         ' ColourToggleDescriptionLabel
-        Main_Menu.RunTimeContructor(ColourToggleDescriptionLabel, 25, 335, 450, 40, "Choose player one's colour:", ContentAlignment.MiddleCenter, "Microsoft Sans Serif", 10.25, Cursors.Default, Color.Transparent)
+        Processes.RunTimeContructor(ColourToggleDescriptionLabel, 25, 335, 450, 40, "Choose player one's colour:", ContentAlignment.MiddleCenter, "Microsoft Sans Serif", 10.25, Cursors.Default, Color.Transparent)
         Controls.Add(ColourToggleDescriptionLabel)
         ColourToggleDescriptionLabel.Parent = BackgroundImage 'sets the label's parent to the background image
         ColourToggleDescriptionLabel.Refresh()
 
         ' ColourToggleButton
-        Main_Menu.RunTimeContructor(ColourToggleButton, 392, 470, 200, 30, "Red", ContentAlignment.MiddleCenter, "Microsoft Sans Serif", 10.25, Cursors.Hand, Color.Transparent)
+        Processes.RunTimeContructor(ColourToggleButton, 392, 470, 200, 30, "Red", ContentAlignment.MiddleCenter, "Microsoft Sans Serif", 10.25, Cursors.Hand, Color.Transparent)
         ColourToggleButton.ForeColor = Color.Red
         AddHandler ColourToggleButton.Click, AddressOf ColourToggleButton_Click
         Controls.Add(ColourToggleButton)
 
         ' ContinueButton
-        Main_Menu.RunTimeContructor(ContinueButton, 392, 505, 200, 30, "Start Game" & vbNewLine & "In the event of a draw, the player with the lowest time wins.", ContentAlignment.MiddleCenter, "Microsoft Sans Serif", 10.25, Cursors.Hand, Color.Transparent)
+        Processes.RunTimeContructor(ContinueButton, 392, 505, 200, 30, "Start Game" & vbNewLine & "In the event of a draw, the player with the lowest time wins.", ContentAlignment.MiddleCenter, "Microsoft Sans Serif", 10.25, Cursors.Hand, Color.Transparent)
         ContinueButton.Font = New Font(ContinueButton.Font, FontStyle.Bold)
         AddHandler ContinueButton.Click, AddressOf ContinueButton_Click
         Controls.Add(ContinueButton)
 
         ' CanContinueIndicatorLabel
-        Main_Menu.RunTimeContructor(CanContinueIndicatorLabel, 392, 527, 200, 30, "Please enter both usernames.", ContentAlignment.MiddleCenter, "Microsoft Sans Serif", 9, Cursors.Default, Color.IndianRed)
+        Processes.RunTimeContructor(CanContinueIndicatorLabel, 392, 527, 200, 30, "Please enter both usernames.", ContentAlignment.MiddleCenter, "Microsoft Sans Serif", 9, Cursors.Default, Color.IndianRed)
         Controls.Add(CanContinueIndicatorLabel)
         CanContinueIndicatorLabel.Visible = False
         BackgroundImage.SendToBack() 'sends the image to the back so that all text and buttons appear in front of it
     End Sub
-    Public Sub SubmitPlayerNameButton_Click(sender As Object, e As EventArgs)
+    Private Sub SubmitPlayerNameButton_Click(sender As Object, e As EventArgs) 'when the button to submit the player name is clicked
         CanContinueIndicatorLabel.Visible = False
         CanContinueIndicatorLabel.Refresh()
         If SubmitPlayerOneNameButton.BackColor = Color.IndianRed Then SubmitPlayerOneNameButton.BackColor = Color.Transparent 'if the colour is red, resets it
@@ -196,7 +194,7 @@
             PlayerNameTextBox.Text = ""
         End If
     End Sub
-    Public Function NameVerification()
+    Private Function NameVerification() 'verifies the name entered is valid
         IncorrectInputLabel.Text = "INVALID INPUT: Name must be 1-16 characters" 'reset default invalid input message
         Dim valid As Boolean = True
         If PlayerNameTextBox.Text = "" Then valid = False 'input can't be blank
@@ -207,7 +205,7 @@
         End If
         Return valid
     End Function
-    Public Sub TimerOptionButton_Click(sender As Object, e As EventArgs)
+    Private Sub TimerOptionButton_Click(sender As Object, e As EventArgs) 'toggles between game modes upon click
         If sender.text = "Timed Game" Then
             TimeCustomiserLabel.Visible = True
             TimeCustomiserTextbox.Visible = True
@@ -223,7 +221,7 @@
             TimerExplanationLabel.Text = "Timed Game: The game is timed." & vbNewLine & "In the event of a draw, the player with the lowest time wins."
         End If
     End Sub
-    Public Sub ColourToggleButton_Click(sender As Object, e As EventArgs)
+    Private Sub ColourToggleButton_Click(sender As Object, e As EventArgs) 'toggles between the two colours upon click for player one's colour
         If sender.Text = "Red" Then
             ColourToggleButton.Text = "Yellow"
             ColourToggleButton.ForeColor = Color.Yellow
@@ -232,7 +230,7 @@
             ColourToggleButton.ForeColor = Color.Red
         End If
     End Sub
-    Public Sub StartingPlayerButton_Click(sender As Object, e As EventArgs)
+    Private Sub StartingPlayerButton_Click(sender As Object, e As EventArgs) 'toggles between player one and two for the starting player upon click
         If sender.Text = "Player One" Then
             StartingPlayerButton.Text = "Player Two"
         ElseIf sender.Text = "Player Two" Then
@@ -241,16 +239,15 @@
             StartingPlayerButton.Text = "Player One"
         End If
     End Sub
-    Public Function getOppositeColour(ColourChoice As String)
+    Private Function getOppositeColour(ColourChoice As String) 'returns the opposite colour to the one sent in
         If ColourChoice = "Red" Then
             Return "Yellow"
         Else
             Return "Red"
         End If
     End Function
-    Public Sub ContinueButton_Click(sender As Object, e As EventArgs)
+    Private Sub ContinueButton_Click(sender As Object, e As EventArgs) 'Starts the game based on inputted parameters
         If CanContinue() Then
-            CanContinueIndicatorLabel.Visible = False
             Me.Hide()
             Dim SubType As String = TimerOptionButton.Text
             Dim ColourChoice As String = ColourToggleButton.Text
@@ -261,6 +258,7 @@
             ElseIf StartingPlayerButton.Text = "Player Two" Then
                 StartingPlayer = PlayerTwoCurrentNameLabel.Text
             Else
+                Randomize()
                 If (CInt(Math.Floor(Rnd() * 2))) = 0 Then 'random number, either 1 or 0 resulting in 50% chance to be either player
                     StartingPlayer = PlayerOneCurrentNameLabel.Text
                 Else
@@ -268,15 +266,28 @@
                 End If
             End If
             Game_Form.Game_Setup("Player", SubType, PlayerOneCurrentNameLabel.Text, ColourChoice, PlayerTwoCurrentNameLabel.Text, OppositeColour, StartingPlayer, TimeCustomiserTextbox.Text)
-        Else
-            CanContinueIndicatorLabel.Visible = True
         End If
     End Sub
     Private Function CanContinue() 'determines if the user has performed the necessary steps to continue
+        Dim ContinuePossibility As Boolean = True
         If PlayerOneCurrentNameLabel.Text <> "" And PlayerTwoCurrentNameLabel.Text <> "" Then
-            Return True
+
+            CanContinueIndicatorLabel.Visible = False
         Else
-            Return False
+            ContinuePossibility = False
+            CanContinueIndicatorLabel.Visible = True
         End If
+        If TimerOptionButton.Text = "Countdown" Then
+            If TimeCustomiserTextbox.Text <> "" And IsNumeric(TimeCustomiserTextbox.Text) Then
+                TimeCustomiserErrorLabel.Visible = False
+            Else
+                TimeCustomiserErrorLabel.Visible = True
+                ContinuePossibility = False
+            End If
+        End If
+        Return ContinuePossibility
     End Function
+    Private Sub Player_Vs_Player_Menu_Closing(sender As Object, e As System.ComponentModel.CancelEventArgs) Handles MyBase.Closing 'when x is pressed
+        Main_Menu.Close() 'closing first form closes whole program
+    End Sub
 End Class

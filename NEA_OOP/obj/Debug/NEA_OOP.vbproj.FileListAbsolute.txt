@@ -73,3 +73,5 @@ C:\Users\James\Documents\James Homework\Computer Science\NEA\USE THIS\ConnectFou
 C:\Users\James\Documents\James Homework\Computer Science\NEA\USE THIS\ConnectFour-main\NEA_OOP\obj\Debug\NEA_OOP.exe
 C:\Users\James\Documents\James Homework\Computer Science\NEA\USE THIS\ConnectFour-main\NEA_OOP\obj\Debug\NEA_OOP.xml
 C:\Users\James\Documents\James Homework\Computer Science\NEA\USE THIS\ConnectFour-main\NEA_OOP\obj\Debug\NEA_OOP.pdb
+C:\Users\James\Documents\James Homework\Computer Science\NEA\USE THIS\ConnectFour-main\NEA_OOP\obj\Debug\NEA_OOP.Previous_Games.resources
+C:\Users\James\Documents\James Homework\Computer Science\NEA\USE THIS\ConnectFour-main\NEA_OOP\obj\Debug\NEA_OOP.Previous_Game_States.resources

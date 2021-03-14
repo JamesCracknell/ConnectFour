@@ -119,6 +119,13 @@
     <Compile Include="Previous_Games.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Previous_Game_States.Designer.vb">
+      <DependentUpon>Previous_Game_States.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Previous_Game_States.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Processes.vb" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Game_Form.resx">
@@ -141,6 +148,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Previous_Games.resx">
       <DependentUpon>Previous_Games.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Previous_Game_States.resx">
+      <DependentUpon>Previous_Game_States.vb</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
