@@ -24,7 +24,7 @@
     Private Username As String = ""
     Private FirstTimeRunning As Boolean = True ' some code only needs to run when it is not the first time 
 
-    ' Main Code
+    ' Code
     Public Sub This_Form_Setup() 'sets up form properties
         Me.Show()
         If FirstTimeRunning Then
@@ -146,7 +146,7 @@
             UsernameEnterTextbox.Text = "" 'clears inputted text
         End If
     End Sub
-    Private Function NameVerification() ' checks if the inputted username is valid
+    Private Function NameVerification() As Boolean ' checks if the inputted username is valid
         Dim Valid As Boolean = True
         If UsernameEnterTextbox.Text = "" Then Valid = False 'input can't be blank
         If UsernameEnterTextbox.Text.Length > 16 Then Valid = False 'input can't be longer than 16 characters
