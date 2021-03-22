@@ -31,7 +31,7 @@ Public Class Game_Form ' The main code for the game
     Private CurrentGameType As String
     Private CurrentSubType As String
 
-    ' Main Code
+    ' Code
 
     Public Sub Game_Setup(GameType As String, SubType As String, PlayerOneName As String, PlayerOneColour As String, PlayerTwoName As String, PlayerTwoColour As String, GameStartingPlayer As String, CountdownTime As Decimal) 'Creates the game object, based on parameters passed in
         Me.Show()
@@ -42,10 +42,10 @@ Public Class Game_Form ' The main code for the game
         PlayerTwoTimerValue = 0
         If GameType = "Computer" Then
             CurrentGame = New Player_Vs_Computer_Game(SubType, PlayerOneName, PlayerOneColour, GameStartingPlayer)
-            If FirstTimeRunning Then
+            Computer_Form_Setup(SubType) 'set up player vs computer specific elements
+            If FirstTimeRunning Then 'some code only needs to run if it is the first time it is being run
                 Board_Setup() 'creates board
                 This_Form_Setup() 'sets up form
-                Computer_Form_Setup(SubType) 'set up player vs computer specific elements
             Else
                 Board_Update() 'resets board
                 UpdateCurrentMoveVisual()
@@ -65,6 +65,7 @@ Public Class Game_Form ' The main code for the game
                 This_Form_Setup() 'sets up form
                 Player_Form_Setup(SubType, CountdownTime) 'set up player vs player specific elements
             Else
+                Controls.Remove(ComputerDifficultyLabel)
                 DisableTimers() 'turns off timets
                 Board_Update() 'rests board
                 UpdateCurrentMoveVisual() 'resets current move
@@ -172,7 +173,6 @@ Public Class Game_Form ' The main code for the game
             Next
         End If
     End Sub
-
     Public Sub TimersStop()
         PlayerOneTimer.Stop()
         PlayerTwoTimer.Stop()
@@ -181,11 +181,10 @@ Public Class Game_Form ' The main code for the game
         Controls.Remove(StartGameButton)
         CurrentGame.startgame(GetSubType())
     End Sub
-    Private Function GetBoardInteractivity()
+    Private Function GetBoardInteractivity() As Boolean
         Return BoardEnabled
     End Function
     Private Sub Player_Form_Setup(SubType As String, CountdownTime As String) 'sets up the controls unique to the player form
-
         ' PlayerOneNameLabel
         Processes.RunTimeContructor(PlayerOneNameLabel, 292, 75, 150, 30, CStr(CurrentGame.GetPlayerOneName()), ContentAlignment.MiddleCenter, "Microsoft Sans Serif", 12, Cursors.Default, Color.Transparent)
         PlayerOneNameLabel.Visible = False
@@ -207,7 +206,6 @@ Public Class Game_Form ' The main code for the game
             Controls.Add(PlayerTwoTimerLabel)
         End If
     End Sub
-
     Private Sub Computer_Form_Setup(Difficulty)
         ' ComputerDifficultyLabel
         Processes.RunTimeContructor(ComputerDifficultyLabel, 142, 90, 150, 50, "Computer Difficulty:" & vbNewLine & Difficulty, ContentAlignment.MiddleCenter, "Microsoft Sans Serif", 10.25, Cursors.Default, Color.LightGray)
@@ -448,7 +446,6 @@ Public Class Game_Form ' The main code for the game
             Next
         End Using
     End Sub
-
     Public Sub Board_Refresh()
         For x = 0 To 6
             For Y = 0 To 5
@@ -475,7 +472,7 @@ Public Class Game_Form ' The main code for the game
             CurrentPlayerLabel.Text = "Current Player:" & vbNewLine & CurrentGame.GetPlayerTwoName
         End If
     End Sub
-    Public Function GetCurrentPlayer()
+    Public Function GetCurrentPlayer() As String
         Dim output As String
         output = Replace(CStr(CurrentPlayerLabel.Text), "Current Player:", "") 'replace command is used to clean up the output
         output = Replace(output, vbCrLf, "")
@@ -487,11 +484,15 @@ Public Class Game_Form ' The main code for the game
     Public Function GetStartingPlayer() As String
         Return StartingPlayer
     End Function
-    Public Function GetGameType()
+    Public Function GetGameType() As String
         Return CurrentGameType
     End Function
     Public Function GetSubType()
         Return CurrentSubType
+    End Function
+
+    Public Function GetBoardEnabled() As Boolean
+        Return BoardEnabled
     End Function
     Private Sub Game_Form_Closing(sender As Object, e As System.ComponentModel.CancelEventArgs) Handles MyBase.Closing 'when x is pressed
         Main_Menu.Close() 'closing first form closes whole program
@@ -529,7 +530,7 @@ Public Class Game
             Next
         Next
     End Sub
-    Public Function GetFilledStatus(x, y) ' return is empty if the space is empty
+    Public Function GetFilledStatus(x, y) As String ' return is empty if the space is empty
         If BoardState(x, y) = "Y" Then
             Return "Y"
         ElseIf BoardState(x, y) = "R" Then
@@ -539,7 +540,7 @@ Public Class Game
     Public Sub SetPlayerOneColour(Colour)
         PlayerOneColour = Colour
     End Sub
-    Public Overridable Function CheckForWinningState(BoardState, CurrentPlayer) 'searches 2D array of char (boardstate) for 4 in a row
+    Public Overridable Function CheckForWinningState(BoardState, CurrentPlayer) As Boolean 'searches 2D array of char (boardstate) for 4 in a row
         Dim WinDiscovered As Boolean = False
         Dim CurrentPlayerChar As Char = GetColourChar(CurrentPlayer)
         If CheckVertical(CurrentPlayerChar).item1 <> "1000" Then ' Verticals
@@ -680,10 +681,10 @@ Public Class Game
             writer.WriteLine(DateTime.Now.ToString & "," & ThisGameType & "," & Game_Form.GetSubType & "," & PlayerOneName & "," & PlayerTwoName & "," & PlayerOneColourString & "," & WinningPlayer & "," & PlayerOneTime & "," & PlayerTwoTime)
         End Using
     End Sub
-    Public Function GetGameOverIndicator()
+    Public Function GetGameOverIndicator() As Boolean
         Return GameOverIndicator
     End Function
-    Protected Function MakeAnimatedMove(XCoordinate, YCoordinate, ColourChar)
+    Protected Sub MakeAnimatedMove(XCoordinate, YCoordinate, ColourChar)
         Game_Form.ToggleBoardInteractivity() 'temporarily disables board
         For Y = 0 To YCoordinate
             If Y > 0 Then
@@ -700,8 +701,8 @@ Public Class Game
             Game_Form.SetPlayerTwoTimerStatus("Enable")
         End If
         Game_Form.ToggleBoardInteractivity() 're-enables board
-    End Function
-    Public Function MakeMove(Location) 'makes the move
+    End Sub
+    Public Function MakeMove(Location) As Boolean 'makes the move
         Dim Column As Integer = (CInt(Location)) \ 6
         Dim MoveMade As Boolean = False
         For y = 5 To 0 Step -1 'counts backwards (up)
@@ -727,38 +728,38 @@ Public Class Game
             Game_Form.UpdateCurrentPlayerVisual()
         End If
     End Sub
-    Public Function GetCurrentMove()
+    Public Function GetCurrentMove() As Integer
         Return CurrentMove
     End Function
-    Public Function UpdateCurrentMove()
+    Public Sub UpdateCurrentMove()
         CurrentMove += 1
-    End Function
-    Public Function GetPlayerOneName()
+    End Sub
+    Public Function GetPlayerOneName() As String
         Return PlayerOneName
     End Function
-    Public Function GetPlayerTwoName()
+    Public Function GetPlayerTwoName() As String
         Return PlayerTwoName
     End Function
-    Public Function GetPlayerOneColour()
+    Public Function GetPlayerOneColour() As Colours
         Return PlayerOneColour
     End Function
     Public Overridable Sub SetPlayerTwoColour(Colour)
         PlayerTwoColour = Colour
     End Sub
-    Public Function SetCurrentColour(CurrentColourInput)
+    Public Sub SetCurrentColour(CurrentColourInput)
         CurrentColour = CurrentColourInput
-    End Function
-    Public Function GetCurrentColour()
+    End Sub
+    Public Function GetCurrentColour() As Colours
         Return CurrentColour
     End Function
-    Public Function GetColourChar(ColourChoice)
+    Public Function GetColourChar(ColourChoice) As String
         If ColourChoice = Colours.Red Then
             Return "R"
         Else
             Return "Y"
         End If
     End Function
-    Public Overridable Function GetPlayerTwoColour()
+    Public Overridable Function GetPlayerTwoColour() As Colours
         Return PlayerTwoColour
     End Function
 End Class
@@ -804,26 +805,25 @@ Public Class Player_Vs_Computer_Game
         Dim Returns
         Dim BestXCoordinate As Integer
         Dim RandomMoveMade As Boolean
-        Returns = Minimax(BoardState, InitialDepth, True)
         Randomize()
         If ChanceOfMistake <= CInt((100) * Rnd()) Then 'random number from 0 to 100. If it is smaller than the chance of mistake then it makes a mistake and picks a random spot.
-            BestXCoordinate = Returns.item2
-            MakeComputerMove(BestXCoordinate)
+            Do
+                Returns = Minimax(BoardState, InitialDepth, True)
+                BestXCoordinate = Returns.item2
+            Loop Until MakeComputerMove(BestXCoordinate) = True 'only allows move if column is not full
         Else
             ' random spot
             Do
                 RandomMoveMade = True
                 BestXCoordinate = CInt((6) * Rnd())
-                If MakeComputerMove(BestXCoordinate) = False Then
-                    RandomMoveMade = False 'column was full, so tries again
-                End If
+                If MakeComputerMove(BestXCoordinate) = False Then RandomMoveMade = False 'column was full, so tries again
             Loop Until RandomMoveMade
         End If
         SwitchMove()
     End Sub
-    Private Function MakeComputerMove(XCoordinate)
+    Private Function MakeComputerMove(XCoordinate) As Boolean
         Dim MoveMade As Boolean = False
-        For y = 5 To 0 Step -1 'counts backwards (up)
+        For y = 5 To 0 Step -1 'counts backwards (up) as columns fill bottom up
             If GetFilledStatus(XCoordinate, y) <> "Y" And GetFilledStatus(XCoordinate, y) <> "R" And MoveMade = False Then
                 MakeAnimatedMove(XCoordinate, y, GetColourChar(ComputerColour))
                 MoveMade = True
@@ -893,7 +893,7 @@ Public Class Player_Vs_Computer_Game
             Return (BestEvaluation, BestColumn)
         End If
     End Function
-    Private Function StaticEvaluation(EvaluatingBoardState(,) As Char) 'returns the score of that board state
+    Private Function StaticEvaluation(EvaluatingBoardState(,) As Char) As Decimal 'returns the score of that board state
         Dim EvaluatedScore As Decimal = 0
         Dim AnalysisColour As Char
         Dim AnalysisSection(3) As Char
@@ -955,7 +955,7 @@ Public Class Player_Vs_Computer_Game
         Next
         Return EvaluatedScore
     End Function
-    Private Function EvaluateScore(EvaluatingSection() As Char, AnalysisColour As Char) 'returns score for specific section of 4 adjacent tiles
+    Private Function EvaluateScore(EvaluatingSection() As Char, AnalysisColour As Char) As Integer 'returns score for specific section of 4 adjacent tiles
         Dim NumberOfTilesInSequence = 0
         Dim NumberOfOppositeTilesInSequence = 0
         Dim SectionScore As Integer = 0
@@ -984,8 +984,13 @@ Public Class Player_Vs_Computer_Game
     Public Sub StartGame(subtype)
         If GetCurrentColour() = PlayerTwoColour Then 'Computer Move
             ComputerMove()
+            If Game_Form.GetBoardEnabled = False Then 'if the board is off
+                Game_Form.ToggleBoardInteractivity() 'activate buttons
+            End If
         Else 'player move
-            Game_Form.ToggleBoardInteractivity() 'activate buttons
+            If Game_Form.GetBoardEnabled = False Then 'if the board is off
+                Game_Form.ToggleBoardInteractivity() 'activate buttons
+            End If
         End If
     End Sub
     Public Overrides Sub SwitchMove()
@@ -999,7 +1004,7 @@ Public Class Player_Vs_Computer_Game
         MyBase.SetPlayerTwoColour(Colour)
         ComputerColour = Colour
     End Sub
-    Public Overrides Function GetPlayerTwoColour()
+    Public Overrides Function GetPlayerTwoColour() As Colours
         MyBase.GetPlayerTwoColour()
         Return ComputerColour
     End Function
@@ -1039,5 +1044,4 @@ Class Player_Vs_Player_Game
             Game_Form.SetPlayerTwoTimerStatus("Disable")
         End If
     End Sub
-
 End Class

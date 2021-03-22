@@ -13,7 +13,7 @@ Public Class Previous_Games ' Shows results of previous 25 games loaded from a f
     Private CloseButtonClicked As Boolean
     Private ListOfGames As New List(Of String)
 
-    ' Main Code
+    ' Code
     Public Sub This_Form_Setup() 'formats forms
         Me.Show()
         Processes.Form_Setup(Me)
@@ -28,7 +28,6 @@ Public Class Previous_Games ' Shows results of previous 25 games loaded from a f
         Controls.Add(CreditLabel)
         Table_Setup()
     End Sub
-
     Private Sub Table_Setup() ' creates controls
         ' DescriptionLabel
         Processes.RunTimeContructor(DescriptionLabel, 0, 60, 984, 35, "The most recent 25 games are displayed below." & vbNewLine & "Double click on the game type for more information about the game.", ContentAlignment.MiddleCenter, "Microsoft Sans Serif", 9.75, Cursors.Default, Color.Transparent)
@@ -77,7 +76,6 @@ Public Class Previous_Games ' Shows results of previous 25 games loaded from a f
         End With
         Controls.Add(PreviousGamesTable)
     End Sub
-
     Private Sub AddData() 'adds data from file to table
         Dim newRow As String()
         Dim StartPosition As Integer
@@ -99,22 +97,18 @@ Public Class Previous_Games ' Shows results of previous 25 games loaded from a f
         Next
         AddHandler PreviousGamesTable.CellContentDoubleClick, AddressOf PreviousGamesTable_CellContentDoubleClick
     End Sub
-
     Private Sub PreviousGamesTable_CellContentDoubleClick(sender As Object, e As DataGridViewCellEventArgs) 'if double click
         If ListOfGames.Count < 25 Then
             Previous_Game_States.This_Form_Setup(e.RowIndex) ' opens the previous game state for that data
         Else
             Previous_Game_States.This_Form_Setup(e.RowIndex + ListOfGames.Count - 25) ' if there is more than 25 items in the list, it needs to account for the data not shown
         End If
-
     End Sub
-
     Private Sub BackButton_Click(sender As Object, e As EventArgs) 'if back button is clicked
         CloseButtonClicked = True
         Me.Close()
         Main_Menu.Show()
     End Sub
-
     Private Sub Previous_Games_Closing(sender As Object, e As System.ComponentModel.CancelEventArgs) Handles MyBase.Closing 'when x is pressed
         If CloseButtonClicked = False Then 'only close whole program when the 
             Main_Menu.Close() 'closing first form closes whole program

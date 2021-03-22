@@ -13,7 +13,6 @@
             FormName.Icon = New Icon("icon.ico") 'sets icon to custom icon
         End With
     End Sub
-
     Public Sub RunTimeContructor(Name, locationX, locationy, sizeX, sizeY, text, textalignment, fontname, fontsize, cursortype, BackColor) 'this creates a control on the form.
         With Name
             .Location = New Point(locationX, locationy)

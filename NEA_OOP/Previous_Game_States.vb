@@ -23,7 +23,7 @@ Public Class Previous_Game_States ' Shows a specific previous game board, includ
     Protected OneDBoardState(42) As String
     Protected BoardState(6, 5) As String
     Private Painted As Boolean = False
-    ' Main Code
+    ' Code
     Public Sub This_Form_Setup(DesiredGame) 'formats form
         Me.Show()
         Painted = False 'so the board is reprinted at the start
@@ -45,7 +45,6 @@ Public Class Previous_Game_States ' Shows a specific previous game board, includ
         SetUpExtraInfo(DesiredGame)
         AddHandler Me.Paint, AddressOf Board_Paint
     End Sub
-
     Private Sub Load_Previous_Game_State(DesiredGame) ' reads requested data from file 
         Dim LatestGameState As String
         Using reader As New StreamReader("PreviousGameStates.txt") 'saves requested row in file to variable
@@ -55,7 +54,7 @@ Public Class Previous_Game_States ' Shows a specific previous game board, includ
         End Using
         Convert1DArrayTo2DArray(LatestGameState)
     End Sub
-    Private Function GetExtraInfo(DesiredGame)
+    Private Function GetExtraInfo(DesiredGame) As String()
         Dim ExtraInfo As String
         Dim ExtraInfoArray() As String
         Using reader As New StreamReader("PreviousGames.txt")
@@ -66,7 +65,6 @@ Public Class Previous_Game_States ' Shows a specific previous game board, includ
         ExtraInfoArray = Split(ExtraInfo, ",")
         Return ExtraInfoArray
     End Function
-
     Private Sub SetUpExtraInfo(DesiredGame) ' creates controls to display data
         ' Close Button
         Processes.RunTimeContructor(CloseButton, 342, 780, 300, 50, "Close", ContentAlignment.MiddleCenter, "Microsoft Sans Serif", 9.75, Cursors.Default, Color.Transparent)
@@ -167,7 +165,6 @@ Public Class Previous_Game_States ' Shows a specific previous game board, includ
             XPos += 100
         Next
     End Sub
-
     Private Sub Board_Paint(sender As Object, e As PaintEventArgs) ' paints the board
         If Painted = False Then 'prevents the board being redrawn. It should only be drawn once.
             Painted = True
@@ -201,7 +198,6 @@ Public Class Previous_Game_States ' Shows a specific previous game board, includ
             Next
         End If
     End Sub
-
     Private Sub UpdateBoard() ' Changes the board images to that of the requested state
         For x = 0 To 6
             For y = 0 To 5
@@ -219,8 +215,6 @@ Public Class Previous_Game_States ' Shows a specific previous game board, includ
             Next
         Next
     End Sub
-
-
     Private Sub CloseButton_Click(sender As Object, e As EventArgs) 'if CloseButton is clicked
         Me.Close()
     End Sub

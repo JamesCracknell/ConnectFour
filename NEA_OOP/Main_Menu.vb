@@ -11,7 +11,7 @@
     Private Shadows BackgroundImage As New PictureBox
     Private QuitButton As New Button
 
-    ' Main Code 
+    ' Code 
     Private Sub Main_Menu_Load(sender As Object, e As EventArgs) Handles MyBase.Load 'runs when the code first runs
         This_Form_Setup()
         Main_Menu_Setup()

@@ -29,7 +29,7 @@
     ' Variable Declarations
     Private FirstTimeRunning As Boolean = True ' some code only needs to run when it is not the first time 
 
-    ' Main Code
+    ' Code
     Public Sub This_Form_Setup() 'sets up form properties
         Me.Show()
         If FirstTimeRunning Then
@@ -194,7 +194,7 @@
             PlayerNameTextBox.Text = ""
         End If
     End Sub
-    Private Function NameVerification() 'verifies the name entered is valid
+    Private Function NameVerification() As Boolean 'verifies the name entered is valid
         IncorrectInputLabel.Text = "INVALID INPUT: Name must be 1-16 characters" 'reset default invalid input message
         Dim valid As Boolean = True
         If PlayerNameTextBox.Text = "" Then valid = False 'input can't be blank
@@ -239,7 +239,7 @@
             StartingPlayerButton.Text = "Player One"
         End If
     End Sub
-    Private Function getOppositeColour(ColourChoice As String) 'returns the opposite colour to the one sent in
+    Private Function getOppositeColour(ColourChoice As String) As String 'returns the opposite colour to the one sent in
         If ColourChoice = "Red" Then
             Return "Yellow"
         Else
@@ -268,7 +268,7 @@
             Game_Form.Game_Setup("Player", SubType, PlayerOneCurrentNameLabel.Text, ColourChoice, PlayerTwoCurrentNameLabel.Text, OppositeColour, StartingPlayer, TimeCustomiserTextbox.Text)
         End If
     End Sub
-    Private Function CanContinue() 'determines if the user has performed the necessary steps to continue
+    Private Function CanContinue() As Boolean 'determines if the user has performed the necessary steps to continue
         Dim ContinuePossibility As Boolean = True
         If PlayerOneCurrentNameLabel.Text <> "" And PlayerTwoCurrentNameLabel.Text <> "" Then
 
