@@ -1009,7 +1009,6 @@ Public Class Player_Vs_Computer_Game
         Return ComputerColour
     End Function
 End Class
-
 Class Player_Vs_Player_Game
     Inherits Game 'sub class
     Private GameSubType As String

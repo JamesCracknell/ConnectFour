@@ -1,5 +1,4 @@
 ﻿Public Class Player_Vs_Computer_Menu 'Menu for configuring the player vs computer mode
-
     ' Control Declarations
 
     Private Title As New PictureBox
