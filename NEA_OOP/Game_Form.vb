@@ -354,7 +354,7 @@ Public Class Game_Form ' The main code for the game
             Next
         Next
     End Sub
-    Public Sub UpdateWinningBoard(WinningColourChar) 'updates the board so it highlights the winning combination
+    Public Sub UpdateWinningBoard(WinningColourChar As Char) 'updates the board so it highlights the winning combination
         Dim Returns
         Dim x As Integer
         Dim y As Integer
@@ -530,17 +530,17 @@ Public Class Game
             Next
         Next
     End Sub
-    Public Function GetFilledStatus(x, y) As String ' return is empty if the space is empty
+    Public Function GetFilledStatus(x As Integer, y As Integer) As String ' return is empty if the space is empty
         If BoardState(x, y) = "Y" Then
             Return "Y"
         ElseIf BoardState(x, y) = "R" Then
             Return "R"
         End If
     End Function
-    Public Sub SetPlayerOneColour(Colour)
+    Public Sub SetPlayerOneColour(Colour As Colours)
         PlayerOneColour = Colour
     End Sub
-    Public Overridable Function CheckForWinningState(BoardState, CurrentPlayer) As Boolean 'searches 2D array of char (boardstate) for 4 in a row
+    Public Overridable Function CheckForWinningState(BoardState As Char(,), CurrentPlayer As Colours) As Boolean 'searches 2D array of char (boardstate) for 4 in a row
         Dim WinDiscovered As Boolean = False
         Dim CurrentPlayerChar As Char = GetColourChar(CurrentPlayer)
         If CheckVertical(CurrentPlayerChar).item1 <> "1000" Then ' Verticals
@@ -554,7 +554,7 @@ Public Class Game
         End If
         Return WinDiscovered
     End Function
-    Public Function CheckVertical(CurrentPlayerChar)
+    Public Function CheckVertical(CurrentPlayerChar As Char)
         For y = 0 To 2
             For x = 0 To 6
                 If BoardState(x, y) = BoardState(x, y + 1) And BoardState(x, y + 1) = BoardState(x, y + 2) And BoardState(x, y + 2) = BoardState(x, y + 3) And BoardState(x, y) = CurrentPlayerChar Then 'cant be blank
@@ -565,7 +565,7 @@ Public Class Game
         Next
         Return ("1000", "") 'returns 1000 (an impossible position) if the win is not detected
     End Function
-    Public Function CheckHorizontal(CurrentPlayerChar)
+    Public Function CheckHorizontal(CurrentPlayerChar As Char)
         For x = 0 To 3
             For y = 0 To 5
                 If BoardState(x, y) = BoardState(x + 1, y) And BoardState(x + 1, y) = BoardState(x + 2, y) And BoardState(x + 2, y) = BoardState(x + 3, y) And BoardState(x, y) = CurrentPlayerChar Then 'if all 4 are equal
@@ -575,7 +575,7 @@ Public Class Game
         Next
         Return ("1000", "")
     End Function
-    Public Function CheckDiagonalOne(CurrentPlayerChar)
+    Public Function CheckDiagonalOne(CurrentPlayerChar As Char)
         For x = 0 To 3
             For y = 0 To 2
                 If BoardState(x, y) = BoardState(x + 1, y + 1) And BoardState(x + 1, y + 1) = BoardState(x + 2, y + 2) And BoardState(x + 2, y + 2) = BoardState(x + 3, y + 3) And BoardState(x, y) = CurrentPlayerChar Then
@@ -585,7 +585,7 @@ Public Class Game
         Next
         Return ("1000", "")
     End Function
-    Public Function CheckDiagonalTwo(CurrentPlayerChar)
+    Public Function CheckDiagonalTwo(CurrentPlayerChar As Char)
         For x = 0 To 3
             For y = 3 To 5
                 If BoardState(x, y) = BoardState(x + 1, y - 1) And BoardState(x + 1, y - 1) = BoardState(x + 2, y - 2) And BoardState(x + 2, y - 2) = BoardState(x + 3, y - 3) And BoardState(x, y) = CurrentPlayerChar Then
@@ -595,7 +595,7 @@ Public Class Game
         Next
         Return ("1000", "")
     End Function
-    Public Function CheckForDrawingState(BoardState) 'checks to see if the board is full
+    Public Function CheckForDrawingState(BoardState As Char(,)) 'checks to see if the board is full
         Dim Full As Boolean = True 'assumes board is full
         For x = 0 To 6
             For y = 0 To 5
@@ -661,7 +661,7 @@ Public Class Game
         Game_Form.Hide() 'hides game form
         Main_Menu.Show() 'returns to main main
     End Sub
-    Protected Sub RecordGame(WinMode, WinningPlayer) ' stores game's data into file
+    Protected Sub RecordGame(WinMode As String, WinningPlayer As String) ' stores game's data into file
         Dim PlayerOneColourString As String
         Dim ThisGameType As String
         Dim PlayerOneTime As String = Game_Form.GetPlayerOneTimerValue()
@@ -684,7 +684,7 @@ Public Class Game
     Public Function GetGameOverIndicator() As Boolean
         Return GameOverIndicator
     End Function
-    Protected Sub MakeAnimatedMove(XCoordinate, YCoordinate, ColourChar)
+    Protected Sub MakeAnimatedMove(XCoordinate As Integer, YCoordinate As Integer, ColourChar As Char)
         Game_Form.ToggleBoardInteractivity() 'temporarily disables board
         For Y = 0 To YCoordinate
             If Y > 0 Then
@@ -743,16 +743,16 @@ Public Class Game
     Public Function GetPlayerOneColour() As Colours
         Return PlayerOneColour
     End Function
-    Public Overridable Sub SetPlayerTwoColour(Colour)
+    Public Overridable Sub SetPlayerTwoColour(Colour As Colours)
         PlayerTwoColour = Colour
     End Sub
-    Public Sub SetCurrentColour(CurrentColourInput)
+    Public Sub SetCurrentColour(CurrentColourInput As Colours)
         CurrentColour = CurrentColourInput
     End Sub
     Public Function GetCurrentColour() As Colours
         Return CurrentColour
     End Function
-    Public Function GetColourChar(ColourChoice) As String
+    Public Function GetColourChar(ColourChoice As Colours) As String
         If ColourChoice = Colours.Red Then
             Return "R"
         Else
@@ -786,7 +786,7 @@ Public Class Player_Vs_Computer_Game
             End If
         End If
     End Sub
-    Private Sub SetDepth(SpecifiedDifficulty) 'sets attributes based on difficulty
+    Private Sub SetDepth(SpecifiedDifficulty As String) 'sets attributes based on difficulty
         If SpecifiedDifficulty = "Easy Difficulty" Then
             ChanceOfMistake = 50
             InitialDepth = 1
@@ -821,7 +821,7 @@ Public Class Player_Vs_Computer_Game
         End If
         SwitchMove()
     End Sub
-    Private Function MakeComputerMove(XCoordinate) As Boolean
+    Private Function MakeComputerMove(XCoordinate As Integer) As Boolean
         Dim MoveMade As Boolean = False
         For y = 5 To 0 Step -1 'counts backwards (up) as columns fill bottom up
             If GetFilledStatus(XCoordinate, y) <> "Y" And GetFilledStatus(XCoordinate, y) <> "R" And MoveMade = False Then
@@ -831,7 +831,7 @@ Public Class Player_Vs_Computer_Game
         Next
         Return MoveMade
     End Function
-    Private Function Minimax(ByVal CurrentBoardState(,) As Char, Depth As Integer, MaximisingPlayer As Boolean)
+    Private Function Minimax(CurrentBoardState(,) As Char, Depth As Integer, MaximisingPlayer As Boolean)
         Dim Evaluation
         Dim BestEvaluation As Double
         Dim BestColumn As Integer
@@ -981,7 +981,7 @@ Public Class Player_Vs_Computer_Game
         End If
         Return SectionScore
     End Function
-    Public Sub StartGame(subtype)
+    Public Sub StartGame(subtype As String)
         If GetCurrentColour() = PlayerTwoColour Then 'Computer Move
             ComputerMove()
             If Game_Form.GetBoardEnabled = False Then 'if the board is off
@@ -1000,7 +1000,7 @@ Public Class Player_Vs_Computer_Game
             ComputerMove()
         End If
     End Sub
-    Public Overrides Sub SetPlayerTwoColour(Colour)
+    Public Overrides Sub SetPlayerTwoColour(Colour As Colours)
         MyBase.SetPlayerTwoColour(Colour)
         ComputerColour = Colour
     End Sub
